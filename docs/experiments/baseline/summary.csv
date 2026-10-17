@@ -1,0 +1,9 @@
+experiment,split,n,accuracy,macro_f1
+binary__tfidf_char,dev,681,0.764,0.733
+binary__tfidf_word,dev,681,0.721,0.669
+binary_generate__tfidf_char,dev,529,0.943,0.9
+binary_generate__tfidf_word,dev,529,0.915,0.851
+multiclass__tfidf_char,dev,681,0.68,0.539
+multiclass__tfidf_word,dev,681,0.636,0.474
+multiclass_generate__tfidf_char,dev,529,0.926,0.796
+multiclass_generate__tfidf_word,dev,529,0.871,0.678

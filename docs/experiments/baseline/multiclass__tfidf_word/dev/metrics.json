@@ -1,0 +1,65 @@
+{
+  "experiment": "multiclass__tfidf_word",
+  "split": "dev",
+  "n": 681,
+  "args": {
+    "mode": "baseline",
+    "variant": "multiclass",
+    "model": "tfidf_word",
+    "test": false
+  },
+  "accuracy": 0.6358296622613803,
+  "macro_f1": 0.4735048157604702,
+  "per_class": {
+    "Human": {
+      "precision": 0.7571115973741794,
+      "recall": 0.7935779816513762,
+      "f1": 0.77491601343785,
+      "support": 436
+    },
+    "GEMINI": {
+      "precision": 0.3225806451612903,
+      "recall": 0.35294117647058826,
+      "f1": 0.33707865168539325,
+      "support": 85
+    },
+    "LLAMA": {
+      "precision": 0.37349397590361444,
+      "recall": 0.45588235294117646,
+      "f1": 0.4105960264900662,
+      "support": 68
+    },
+    "CODESTRAL": {
+      "precision": 0.5416666666666666,
+      "recall": 0.2826086956521739,
+      "f1": 0.37142857142857144,
+      "support": 92
+    }
+  },
+  "confusion_matrix": [
+    [
+      346,
+      41,
+      36,
+      13
+    ],
+    [
+      42,
+      30,
+      8,
+      5
+    ],
+    [
+      27,
+      6,
+      31,
+      4
+    ],
+    [
+      42,
+      16,
+      8,
+      26
+    ]
+  ]
+}
