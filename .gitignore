@@ -222,9 +222,13 @@ __marimo__/
 # Artifacts produced
 artifacts/
 
-# Testing files ignored
+# Testing files
 tmp.py
 tmp.md
 
+# data directory
 data/*
 !data/README.md
+
+# keeping run.log in repo for reference
+!run/run.log
