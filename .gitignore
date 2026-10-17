@@ -221,3 +221,10 @@ __marimo__/
 
 # Artifacts produced
 artifacts/
+
+# Testing files ignored
+tmp.py
+tmp.md
+
+data/*
+!data/README.md
