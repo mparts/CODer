@@ -41,8 +41,9 @@ def artifacts(df):
 
 
 if __name__ == "__main__":
-    log("Loading processed dataset & printing stats...")
+    log("Loading processed dataset & printing stats...", "start")
     df = pd.read_parquet(PROCESSED_DIR / "all.parquet")
     composition(df)
     leakage(df)
     artifacts(df)
+    log("Statistics succesfully gathered!!", "end")

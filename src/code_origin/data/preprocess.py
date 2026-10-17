@@ -8,27 +8,13 @@ Columns of the output files:
     meta_*                     info that leaks the label (status, source, parent, LLM): analysis only
 """
 import hashlib, json, re
-from itertools import combinations
 
 import numpy as np, pandas as pd
 from sklearn.model_selection import StratifiedGroupKFold
 
-from code_origin.config import PROCESSED_DIR, RAW_DIR, SEED, LLMS, BINARY
+from code_origin.config import PROCESSED_DIR, RAW_DIR, SEED, VARIANTS
 from code_origin.helpers import log
 
-
-# name: (pandas query, target column, classes)
-VARIANTS = {
-    "human_vs_ai": (None, "origin", BINARY),
-    "multiclass": (None, "meta_LLM", ["Human"] + LLMS),
-    "human_vs_generate": ("meta_source in ['human', 'generate']", "origin", BINARY),
-    "accepted_vs_generate": ("meta_status == 'Accepted' or meta_source == 'generate'", "origin", BINARY),
-    "wrongruntime_human_vs_edit": ("meta_status in ['Wrong', 'Runtime'] and meta_source in ['human', 'edit']", "origin", BINARY),
-}
-for m in LLMS:
-    VARIANTS[f"human_vs_{m.lower()}"] = (f"meta_LLM in ['Human', '{m}']", "meta_LLM", ["Human", m])
-for a, b in combinations(LLMS, 2):
-    VARIANTS[f"{a.lower()}_vs_{b.lower()}"] = (f"meta_LLM in ['{a}', '{b}']", "meta_LLM", [a, b])
 
 
 def normalise(code):
@@ -86,5 +72,6 @@ def preprocess():
 
 
 if __name__ == "__main__":
-    log("Preprocessing the dataset...")
+    log("Preprocessing the dataset...", "start")
     preprocess()
+    log("Dataset processed!!", "end")

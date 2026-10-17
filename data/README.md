@@ -43,20 +43,11 @@ data/
 
 | Variant | Classes |
 |---|---|
-| `human_vs_ai` | human, ai |
+| `binary` | human vs ai |
+| `binary_generate` | human vs LLM code written from scratch |
 | `multiclass` | Human, GEMINI, LLAMA, CODESTRAL |
-| `human_vs_gemini`, `human_vs_llama`, `human_vs_codestral` | Human vs one LLM |
-| `gemini_vs_llama`, `gemini_vs_codestral`, `llama_vs_codestral` | LLM vs LLM |
-| `human_vs_generate` | human vs LLM code written from scratch |
-| `accepted_vs_generate` | accepted human solutions vs LLM code written from scratch |
-| `wrongruntime_human_vs_edit` | human Wrong/Runtime submissions vs LLM edits of them |
+| `multiclass_generate` | Human, GEMINI, LLAMA, CODESTRAL only written from scratch|
 
-Load them with:
-
-```python
-from code_origin.data.loader import load_variant
-df = load_variant("human_vs_ai", clean=True)   # clean=True drops conflict rows
-```
 
 ## Citation
 

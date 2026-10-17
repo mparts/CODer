@@ -5,15 +5,6 @@ import numpy as np, pandas as pd
 from code_origin.config import PROCESSED_DIR, RAW_DIR
 
 
-def load_variant(name, clean=False, balance=False, seed=0):
-    """Load one task variant. clean drops label-conflict rows, balance downsamples to the smallest class per split."""
-    df = pd.read_parquet(PROCESSED_DIR / "variants" / f"{name}.parquet")
-    if clean:
-        df = df[~df.conflict]
-    if balance:
-        df = pd.concat([g.groupby("y").sample(g.y.value_counts().min(), random_state=seed) for _, g in df.groupby("split")])
-    return df.reset_index(drop=True)
-
 def load_variant(name, clean=False, balance=False, seed=0, meta=False):
     """Load one task variant. clean drops label-conflict rows, balance downsamples to the smallest class per split.
     The meta_* columns reveal the label, so they are only returned with meta=True."""
@@ -21,8 +12,7 @@ def load_variant(name, clean=False, balance=False, seed=0, meta=False):
     if clean:
         df = df[~df.conflict]
     if balance:
-        df = pd.concat([g.groupby("y").sample(g.y.value_counts().min(), random_state=seed)
-                        for _, g in df.groupby("split")])
+        df = pd.concat([g.groupby("y").sample(g.y.value_counts().min(), random_state=seed) for _, g in df.groupby("split")])
     df = df.reset_index(drop=True)
     if not meta:
         df = df.drop(columns=[c for c in df if c.startswith("meta_")])

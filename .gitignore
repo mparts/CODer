@@ -222,10 +222,6 @@ __marimo__/
 # Artifacts produced
 artifacts/
 
-# Testing files
-tmp.py
-tmp.md
-
 # data directory
 data/*
 !data/README.md

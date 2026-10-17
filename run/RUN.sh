@@ -17,7 +17,7 @@ else
 fi
 
 section() {
-    printf "    |    |\n    |    |\n%s\n    |    |\n    |    |\n" "$1" | tee -a "$LOG_FILE"
+    printf "    :    :\n    |    |\n%s\n    |    |\n    :    :\n" "$1" | tee -a "$LOG_FILE"
 }
 
 run_step() {
@@ -42,6 +42,14 @@ run_step $DOWNLOAD_DATASET data.download
 run_step $PREPROCESS_DATASET data.preprocess
 run_step $PRINT_DATASET_STATS data.audit
 
+# for t in "1 2 3 4"; do
+#     run_step $DOWNLOAD_DATASET data.download
+# done
+for v in binary binary_generate multiclass multiclass_generate; do 
+    for m in tfidf_word tfidf_char; do 
+        run_step $TRAIN_BASELINE training.train --variant $v --model $m
+    done; 
+done 
 
 echo "$LINE" | tee -a "$LOG_FILE"
 echo "^^^                                       ^^^" | tee -a "$LOG_FILE"

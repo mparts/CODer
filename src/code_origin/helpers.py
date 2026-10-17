@@ -4,5 +4,12 @@ Module holding general helper functions
 from datetime import datetime
 
 
-def log(message):
-    print("\n"), print("="*100), print(f"[{datetime.now()}] {message}", flush=True)
+def log(message, position=""):
+    line = "="*100
+    body = f"   [{datetime.now()}] {message}"
+    if position == "start":
+        print(line), print(body), print("\n")
+    elif position == "end":
+        print("\n"), print(body), print(line)
+    else:
+        print(body)
