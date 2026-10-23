@@ -1,0 +1,40 @@
+{
+  "experiment": "binary_generate__codebert",
+  "split": "dev",
+  "n": 529,
+  "args": {
+    "model": "codebert",
+    "variant": "binary_generate",
+    "epochs": 1,
+    "lr": 2e-05,
+    "batch_size": 16,
+    "eval": false,
+    "test": false
+  },
+  "accuracy": 0.7618147448015122,
+  "macro_f1": 0.6954101776705418,
+  "per_class": {
+    "human": {
+      "precision": 0.9558823529411765,
+      "recall": 0.7454128440366973,
+      "f1": 0.8376288659793815,
+      "support": 436
+    },
+    "ai": {
+      "precision": 0.4126984126984127,
+      "recall": 0.8387096774193549,
+      "f1": 0.5531914893617021,
+      "support": 93
+    }
+  },
+  "confusion_matrix": [
+    [
+      325,
+      111
+    ],
+    [
+      15,
+      78
+    ]
+  ]
+}
