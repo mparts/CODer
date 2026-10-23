@@ -1,11 +1,11 @@
 {
-  "experiment": "multiclass_generate__tfidf_word",
+  "experiment": "multiclass_generate__word_LogReg",
   "split": "dev",
   "n": 529,
   "args": {
-    "mode": "baseline",
+    "model": "word_LogReg",
     "variant": "multiclass_generate",
-    "model": "tfidf_word",
+    "eval": false,
     "test": false
   },
   "accuracy": 0.8714555765595463,

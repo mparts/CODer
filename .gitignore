@@ -228,3 +228,8 @@ data/*
 
 # keeping run.log in repo for reference
 !run/run.log
+
+# temp ignore
+# docs/experiments/
+docs/experiments/transformer/
+# docs/experiments/baseline/

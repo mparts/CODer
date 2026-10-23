@@ -1,11 +1,11 @@
 {
-  "experiment": "binary_generate__tfidf_word",
+  "experiment": "binary_generate__word_LogReg",
   "split": "dev",
   "n": 529,
   "args": {
-    "mode": "baseline",
+    "model": "word_LogReg",
     "variant": "binary_generate",
-    "model": "tfidf_word",
+    "eval": false,
     "test": false
   },
   "accuracy": 0.9149338374291115,

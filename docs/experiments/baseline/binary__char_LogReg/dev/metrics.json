@@ -1,11 +1,11 @@
 {
-  "experiment": "binary__tfidf_char",
+  "experiment": "binary__char_LogReg",
   "split": "dev",
   "n": 681,
   "args": {
-    "mode": "baseline",
+    "model": "char_LogReg",
     "variant": "binary",
-    "model": "tfidf_char",
+    "eval": false,
     "test": false
   },
   "accuracy": 0.7635829662261381,

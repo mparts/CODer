@@ -8,8 +8,8 @@
 cd "$(dirname "$0")" || exit 1
 source "./run.conf"
 
-LINE="===================================================================================================="
 
+LINE="|==========|==========|==========|==========|==========|==========|==========|==========|==========|"
 if $APPEND_LOG; then
     echo "$LINE" | tee -a "$LOG_FILE"
 else
@@ -34,22 +34,48 @@ run_step() {
 
 
 section "CODer Pipeline"
-echo "$LINE" | tee -a "$LOG_FILE"
+
+if ! $DOWNLOAD_DATASET && ! $PREPROCESS_DATASET && ! $PRINT_DATASET_STATS; then
+    echo "$LINE" | tee -a "$LOG_FILE"
+    section "<!> Part 1. Dataset download and preprocessing skipped.<!>"
+else
+    echo "$LINE" | tee -a "$LOG_FILE"
+    section "Part 1. Dataset download and preprocessing"
+    echo "$LINE" | tee -a "$LOG_FILE"
+    run_step $DOWNLOAD_DATASET data.download
+    run_step $PREPROCESS_DATASET data.preprocess
+    run_step $PRINT_DATASET_STATS data.audit
+fi
 
 
-section "Part 1. Dataset download and preprocessing"
-run_step $DOWNLOAD_DATASET data.download
-run_step $PREPROCESS_DATASET data.preprocess
-run_step $PRINT_DATASET_STATS data.audit
+if ! $TRAIN_BASELINE; then
+    echo "$LINE" | tee -a "$LOG_FILE"
+    section "<!> Part 2. Baseline training and evaluation skipped. <!>"
+else
+    echo "$LINE" | tee -a "$LOG_FILE"
+    section "Part 2. Baseline training and evaluation"
+    echo "$LINE" | tee -a "$LOG_FILE"
+    for v in $DATASETS; do
+        for m in $BASE_MODELS; do
+            run_step true training.train_baseline --variant "$v" --model "$m"
+        done
+    done
+fi
 
-# for t in "1 2 3 4"; do
-#     run_step $DOWNLOAD_DATASET data.download
-# done
-for v in binary binary_generate multiclass multiclass_generate; do 
-    for m in tfidf_word tfidf_char; do 
-        run_step $TRAIN_BASELINE training.train --variant $v --model $m
-    done; 
-done 
+
+if ! $TRAIN_CODEBERT; then
+    echo "$LINE" | tee -a "$LOG_FILE"
+    section "<!> Part 3. Transformer training and evaluation skipped. <!>"
+else
+    echo "$LINE" | tee -a "$LOG_FILE"
+    section "Part 3. Transformer training and evaluation"
+    echo "$LINE" | tee -a "$LOG_FILE"
+    for v in $DATASETS; do
+        for m in $TRANSFORMER_MODELS; do
+            run_step true training.train_codebert --variant "$v" --model "$m" 
+        done
+    done
+fi
 
 echo "$LINE" | tee -a "$LOG_FILE"
 echo "^^^                                       ^^^" | tee -a "$LOG_FILE"

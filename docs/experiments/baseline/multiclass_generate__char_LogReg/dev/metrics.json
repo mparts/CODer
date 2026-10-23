@@ -1,11 +1,11 @@
 {
-  "experiment": "multiclass_generate__tfidf_char",
+  "experiment": "multiclass_generate__char_LogReg",
   "split": "dev",
   "n": 529,
   "args": {
-    "mode": "baseline",
+    "model": "char_LogReg",
     "variant": "multiclass_generate",
-    "model": "tfidf_char",
+    "eval": false,
     "test": false
   },
   "accuracy": 0.9262759924385633,
