@@ -44,7 +44,18 @@ ARGS = {
     "max_length": 128,
     "class_weight": "none",
 }
-
+# summary
+METRIC_COLUMNS = ["experiment", "split", "n", "accuracy", "macro_f1"]
+HYPERPARAMETERS = [
+    "seed",
+    "epochs",
+    "max_length",
+    "lr",
+    "batch_size",
+    "weight_decay",
+    "warmup_ratio",
+    "class_weight",
+]
 
 # == Plotting ====================================
 COLOR = "#3b6ea5"
@@ -52,6 +63,4 @@ COLOR = "#3b6ea5"
 
 # == Transformer =======================================
 CHECKPOINTS = {"codebert": "microsoft/codebert-base", "unixcoder": "microsoft/unixcoder-base"}
-
-# train_codebert.py: replace CHECKPOINT with CHECKPOINTS[a.model] in both from_pretrained calls
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

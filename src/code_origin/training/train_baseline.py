@@ -9,7 +9,7 @@ test run: loads that saved model and writes docs/experiments/<experiment>/test/.
 import argparse, json, joblib
 
 from code_origin.config import ARGS, MODES
-from code_origin.helpers import log, cache_data
+from code_origin.helpers import log, cache_data, archive_run
 from code_origin.evaluation import plots, evaluate
 from code_origin.models.baseline import make_baseline
 
@@ -63,4 +63,5 @@ if __name__ == "__main__":
     if len(classes) == 2:
         plots.roc_plot(predictions.y, predictions.score, out / "roc.png")
 
+    archive_run(out, a, MODES[0])
     log("Success!!", "end")

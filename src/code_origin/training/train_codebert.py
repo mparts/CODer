@@ -14,7 +14,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers.utils import logging
 
 from code_origin.config import SEED, CHECKPOINTS, DEVICE, ARGS, MODES
-from code_origin.helpers import log, cache_data
+from code_origin.helpers import log, cache_data, archive_run
 from code_origin.models.transformer import batches, predict_proba, fit
 from code_origin.evaluation import plots, evaluate
 
@@ -81,4 +81,5 @@ if __name__ == "__main__":
     if len(classes) == 2:
         plots.roc_plot(predictions.y, predictions.score, out / "roc.png")
 
+    archive_run(out, a, MODES[1])
     log("Success!!", "end")

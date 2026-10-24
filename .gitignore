@@ -228,3 +228,5 @@ data/*
 
 # keeping run.log in repo for reference
 !run/run.log
+
+docs/experiments/

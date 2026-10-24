@@ -24,7 +24,7 @@ log_dir = ROOT / "logs"
 log_dir.mkdir(exist_ok=True)
 log = log_dir / f"sweep_{datetime.now():%Y%m%d_%H%M}.log"
 
-for seed in a.seeds:                      # seed is the outer loop: finished seeds survive an interrupted job
+for seed in a.seeds:
     for variant in a.variants:
         cmd = [sys.executable, "-m", "code_origin.training.train_codebert",
                "--variant", variant, "--model", a.model, *overrides]
