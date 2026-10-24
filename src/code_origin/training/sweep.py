@@ -7,30 +7,35 @@ from datetime import datetime
 
 from code_origin.config import ARGS, ROOT
 
+
 ap = argparse.ArgumentParser()
-ap.add_argument("--variants", nargs="+", default=ARGS["variant"])
-ap.add_argument("--seeds", nargs="+", type=int, default=[0, 1, 2])
-ap.add_argument("--model", default=ARGS["transformer_models"][1])
+ap.add_argument("--variants", nargs="+", default=[ARGS["variant"][1], ARGS["variant"][-1]])
+ap.add_argument("--seeds", nargs="+", type=int, default=[2])
+ap.add_argument("--model", default=[ARGS["transformer_models"][1]])
 ap.add_argument("--epochs", type=int)
 ap.add_argument("--lr", type=float)
 ap.add_argument("--max_length", type=int)
 ap.add_argument("--batch_size", type=int)
 ap.add_argument("--class_weight")
+ap.add_argument("--dropout", type=float)
+
 a = ap.parse_args()
 
-overrides = [x for k in ("epochs", "lr", "max_length", "batch_size", "class_weight")
+overrides = [x for k in ("epochs", "lr", "max_length", "batch_size", "class_weight", "dropout")
              if getattr(a, k) is not None for x in (f"--{k}", str(getattr(a, k)))]
 log_dir = ROOT / "logs"
 log_dir.mkdir(exist_ok=True)
 log = log_dir / f"sweep_{datetime.now():%Y%m%d_%H%M}.log"
 
 for seed in a.seeds:
-    for variant in a.variants:
-        cmd = [sys.executable, "-m", "code_origin.training.train_codebert",
-               "--variant", variant, "--model", a.model, *overrides]
-        env = {**os.environ, "SEED": str(seed), "PYTHONPATH": str(ROOT / "src")}
-        header = f"\n##### seed {seed} | {variant} | {' '.join(overrides)}\n"
-        print(header, flush=True)
-        with log.open("a") as f:
-            f.write(header)
-        subprocess.run(f"{shlex.join(cmd)} 2>&1 | tee -a {shlex.quote(str(log))}", shell=True, env=env)
+    for model in a.model:
+        for variant in a.variants:
+            cmd = [sys.executable, "-m", "code_origin.training.train_codebert",
+                "--variant", variant, "--model", model, *overrides]
+            env = {**os.environ, "SEED": str(seed), "PYTHONPATH": str(ROOT / "src")}
+            header = f"\n##### seed {seed} | {variant} | {' '.join(overrides)}\n"
+            print(header, flush=True)
+            with log.open("a") as f:
+                f.write(header)
+            subprocess.run(f"{shlex.join(cmd)} 2>&1 | tee -a {shlex.quote(str(log))}", shell=True, env=env)
+            subprocess.run(["sed", "-i", r"/^[[:space:]]*Epoch/d", str(log)], check=True)

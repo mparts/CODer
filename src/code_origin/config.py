@@ -27,40 +27,46 @@ VARIANTS = { # name: (pandas query, target column, classes)
 
 # == MODELS ============================================
 BASE_MODELS = ["word_LogReg", "char_LogReg"]
-TRANSFORMER_MODELS = ["codebert", "unixcoder"]
+TRANSFORMER_MODELS = ["codebert", "unixcoder", "graphcodebert"]
 
 # == General ================================================
-SEED = int(os.environ.get("SEED", 42))
+SEED = int(os.environ.get("SEED", 0))
 MODES = ["baseline", "transformer"]
 ARGS = {
     "baseline_models": BASE_MODELS ,
     "transformer_models": TRANSFORMER_MODELS,
     "variant": list(VARIANTS.keys()),
     "epochs": 4,
-    "batch_size": 16,
+    "max_length": 256,
     "lr": 2e-5,
+    "batch_size": 16,
     "weight_decay": 0.01,
     "warmup_ratio": 0.1,
-    "max_length": 128,
     "class_weight": "none",
+    "dropout": 0.1,
 }
 # summary
 METRIC_COLUMNS = ["experiment", "split", "n", "accuracy", "macro_f1"]
-HYPERPARAMETERS = [
-    "seed",
-    "epochs",
-    "max_length",
-    "lr",
-    "batch_size",
-    "weight_decay",
-    "warmup_ratio",
-    "class_weight",
-]
+# HYPERPARAMETERS = [
+#     "seed",
+#     "epochs",
+#     "max_length",
+#     "lr",
+#     "batch_size",
+#     "weight_decay",
+#     "warmup_ratio",
+#     "class_weight",
+# ]
+HYPERPARAMETERS = ["seed"] + list(ARGS.keys())[3:]
 
 # == Plotting ====================================
 COLOR = "#3b6ea5"
 
 
 # == Transformer =======================================
-CHECKPOINTS = {"codebert": "microsoft/codebert-base", "unixcoder": "microsoft/unixcoder-base"}
+CHECKPOINTS = {"codebert": "microsoft/codebert-base",
+               "unixcoder": "microsoft/unixcoder-base",
+               "graphcodebert": "microsoft/graphcodebert-base",}
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+TEST = ["seed"] + list(ARGS.keys())[3:]

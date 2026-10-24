@@ -7,9 +7,8 @@ dev run : fine-tunes on train for a fixed number of epochs (no checkpoint pickin
           to artifacts/<variant>__codebert/ and results to docs/experiments/<variant>__codebert/dev/
 test run: loads the saved model (no training) and writes .../test/. Do this once, at the very end.
 """
-import argparse, json
+import argparse, json, numpy as np, torch
 
-import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers.utils import logging
 
@@ -30,7 +29,9 @@ def train():
         log(f"Training {exp}...", "start")
         torch.manual_seed(SEED)
         tok = AutoTokenizer.from_pretrained(CHECKPOINTS[a.model], clean_up_tokenization_spaces=True)
-        model = AutoModelForSequenceClassification.from_pretrained(CHECKPOINTS[a.model], num_labels=len(classes)).to(DEVICE)
+        model = AutoModelForSequenceClassification.from_pretrained(
+            CHECKPOINTS[a.model], num_labels=len(classes),
+            hidden_dropout_prob=a.dropout, attention_probs_dropout_prob=a.dropout).to(DEVICE)
         history = fit(model, tok, df[df.split == "train"], df[df.split == "dev"], classes, a)
         model.save_pretrained(model_dir)
         tok.save_pretrained(model_dir)
@@ -41,6 +42,7 @@ def train():
 def eval(model, tok):
     ev = df[df.split == split].reset_index(drop=True)
     proba = predict_proba(model, batches(tok, ev.code_norm, ev.y.values, 64, a.max_length, shuffle=False))
+    np.save(out / "proba.npy", proba)
     pred = proba.argmax(axis=1)
     res = evaluate.evaluate(ev.y, pred, classes)
 
@@ -64,7 +66,7 @@ if __name__ == "__main__":
     ap.add_argument("--warmup_ratio", default=ARGS["warmup_ratio"],          type=float)
     ap.add_argument("--max_length",   default=ARGS["max_length"],            type=int)
     ap.add_argument("--class_weight", default=ARGS["class_weight"])
-    ap.add_argument("--save", action="store_true", help="Save run in archive")
+    ap.add_argument("--dropout",      default=ARGS["dropout"],               type=float)
     ap.add_argument("--eval", action="store_true", help="Evaluate the saved model on dev")
     ap.add_argument("--test", action="store_true", help="Evaluate the saved model on test instead of dev")
     a = ap.parse_args()

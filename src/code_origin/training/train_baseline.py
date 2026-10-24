@@ -6,7 +6,7 @@ dev run : fits on train, saves the model to artifacts/<experiment>/
           and metrics, predictions and plots to docs/experiments/<experiment>/dev/
 test run: loads that saved model and writes docs/experiments/<experiment>/test/.
 """
-import argparse, json, joblib
+import argparse, json, joblib, numpy as np
 
 from code_origin.config import ARGS, MODES
 from code_origin.helpers import log, cache_data, archive_run
@@ -33,12 +33,14 @@ def train():
 def eval(clf):
     ev = df[df.split == split].reset_index(drop=True)
     X = ev.code_norm
-    pred = clf.predict(X)
+    proba = clf.predict_proba(X)
+    np.save(out / "proba.npy", proba)
+    pred = clf.classes_[proba.argmax(axis=1)]
     res = evaluate.evaluate(ev.y, pred, classes)
 
     preds = ev[["uid", "problem_id", "y", "meta_LLM", "meta_source"]].assign(pred=pred)
     if len(classes) == 2:
-        preds["score"] = clf.predict_proba(X)[:, 1]
+        preds["score"] = proba[:, 1]
     preds.to_parquet(out / "predictions.parquet", index=False)
     (out / "metrics.json").write_text(json.dumps({"experiment": exp, "split": split, "n": len(ev), "args": vars(a), **res}, indent=2))
     return res, preds

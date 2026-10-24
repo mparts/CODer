@@ -33,6 +33,6 @@ def cache_data(a, mode):
 def archive_run(source, a, mode):
     exp = f"{a.variant}__{a.model}"
     split = "test" if a.test else "dev"
-    run_name = f"{SEED}_{a.epochs}_{a.max_length}_{a.lr}_{a.batch_size}_{a.weight_decay}_{a.warmup_ratio}_{a.class_weight}" if mode == MODES[1] else SEED
+    run_name = f"{SEED}_{a.epochs}_{a.max_length}_{a.lr}_{a.batch_size}_{a.weight_decay}_{a.warmup_ratio}_{a.class_weight}_{a.dropout}" if mode == MODES[1] else SEED
     out = EXPERIMENTS_DIR / "archive" / mode / str(run_name) / exp / split
     shutil.copytree(source, out, dirs_exist_ok=True)
