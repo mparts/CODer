@@ -1,5 +1,0 @@
-experiment,split,n,accuracy,macro_f1
-binary_generate__codebert,dev,529,0.762,0.695
-multiclass_generate__codebert,dev,529,0.824,0.6
-binary__codebert,dev,681,0.565,0.563
-multiclass__codebert,dev,681,0.517,0.419

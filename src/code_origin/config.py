@@ -2,7 +2,7 @@
 Module holding configs
 """
 from pathlib import Path
-import torch
+import torch, os
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -15,7 +15,6 @@ EXPERIMENTS_DIR = ROOT / "docs" / "experiments"
 
 # == Dataset & Preprocessing =================================
 REPO = "basakdemirok/AIGCodeSet"
-SEED = 42
 LLMS, BINARY = ["GEMINI", "LLAMA", "CODESTRAL"], ["human", "ai"]
 
 VARIANTS = { # name: (pandas query, target column, classes)
@@ -25,18 +24,26 @@ VARIANTS = { # name: (pandas query, target column, classes)
     "multiclass_generate": ("meta_source in ['human', 'generate']", "meta_LLM", ["Human"] + LLMS),
 }
 
+
 # == MODELS ============================================
 BASE_MODELS = ["word_LogReg", "char_LogReg"]
-TRANSFORMER_MODELS = ["codebert"]
+TRANSFORMER_MODELS = ["codebert", "unixcoder"]
 
-
-# == Args!!!! ================================================
+# == General ================================================
+SEED = int(os.environ.get("SEED", 42))
+MODES = ["baseline", "transformer"]
 ARGS = {
     "baseline_models": BASE_MODELS ,
     "transformer_models": TRANSFORMER_MODELS,
     "variant": list(VARIANTS.keys()),
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-5,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "class_weight": "none",
 }
-
 
 
 # == Plotting ====================================
@@ -44,9 +51,7 @@ COLOR = "#3b6ea5"
 
 
 # == Transformer =======================================
-CHECKPOINT = "microsoft/codebert-base"
+CHECKPOINTS = {"codebert": "microsoft/codebert-base", "unixcoder": "microsoft/unixcoder-base"}
+
+# train_codebert.py: replace CHECKPOINT with CHECKPOINTS[a.model] in both from_pretrained calls
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-
-
-# == General ================================================
-MODES = ["baseline", "transformer"]

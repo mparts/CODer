@@ -3,7 +3,7 @@ Metrics for the classification tasks.
 """
 import json
 import pandas as pd
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_recall_fscore_support
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 from code_origin.config import EXPERIMENTS_DIR
 
 

@@ -70,9 +70,11 @@ else
     echo "$LINE" | tee -a "$LOG_FILE"
     section "Part 3. Transformer training and evaluation"
     echo "$LINE" | tee -a "$LOG_FILE"
+    section "Seed $s"
     for v in $DATASETS; do
         for m in $TRANSFORMER_MODELS; do
-            run_step true training.train_codebert --variant "$v" --model "$m" 
+            run_step true training.train_codebert --variant "$v" --model "$m"
+            sed -i '/^[[:space:]]*Epoch/d' "$LOG_FILE"
         done
     done
 fi

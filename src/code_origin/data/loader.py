@@ -2,10 +2,10 @@
 Module holding helpers for loading the downloaded datasets
 """
 import numpy as np, pandas as pd
-from code_origin.config import PROCESSED_DIR, RAW_DIR
+from code_origin.config import PROCESSED_DIR, RAW_DIR, SEED
 
 
-def load_variant(name, clean=False, balance=False, seed=0, meta=False):
+def load_variant(name, clean=False, balance=False, seed=SEED, meta=False):
     """Load one task variant. clean drops label-conflict rows, balance downsamples to the smallest class per split.
     The meta_* columns reveal the label, so they are only returned with meta=True."""
     df = pd.read_parquet(PROCESSED_DIR / "variants" / f"{name}.parquet")

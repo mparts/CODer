@@ -1,4 +1,7 @@
-"""Plots saved with every experiment."""
+"""
+Plots saved with every experiment.
+"""
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -21,15 +24,11 @@ def confusion_matrix_plot(cm, classes, path):
     ax.imshow(share, vmin=0, vmax=1, cmap="Blues")
     for i in range(len(classes)):
         for j in range(len(classes)):
-            ax.text(j, i, f"{share[i, j]:.0%}\n({cm[i, j]})", ha="center", va="center",
-                    color="white" if share[i, j] > 0.5 else "black")
-    ax.set_xticks(range(len(classes)))
-    ax.set_xticklabels(classes, rotation=30, ha="right")
-    ax.set_yticks(range(len(classes)))
-    ax.set_yticklabels(classes)
-    ax.set_xlabel("predicted")
-    ax.set_ylabel("true")
+            ax.text(j, i, f"{share[i, j]:.0%}\n({cm[i, j]})", ha="center", va="center", color="white" if share[i, j] > 0.5 else "black")
+    ax.set_xticks(range(len(classes))), ax.set_yticks(range(len(classes)))
+    ax.set_xticklabels(classes, rotation=30, ha="right"), ax.set_yticklabels(classes)
     ax.set_title("Confusion matrix (share of each true class)")
+    ax.set_xlabel("predicted"), ax.set_ylabel("true")
     _save(fig, path)
 
 
@@ -54,14 +53,12 @@ def roc_plot(y, score, path):
     fig, ax = plt.subplots(figsize=(4.5, 4.5))
     ax.plot(fpr, tpr, color=COLOR)
     ax.plot([0, 1], [0, 1], ls="--", color="grey")
-    ax.set_xlabel("false positive rate")
-    ax.set_ylabel("true positive rate")
+    ax.set_xlabel("false positive rate"), ax.set_ylabel("true positive rate")
     ax.set_title(f"ROC curve, AUC = {roc_auc_score(y, score):.3f}")
     _save(fig, path)
 
 
 def top_features_plot(clf, classes, path, k=15):
-    # n-grams with the largest logistic regression weight for each class
     names = clf[0].get_feature_names_out()
     coef = clf[-1].coef_
     weights = {classes[1]: coef[0], classes[0]: -coef[0]} if len(classes) == 2 else dict(zip(classes, coef))
@@ -69,6 +66,27 @@ def top_features_plot(clf, classes, path, k=15):
     for ax, (cls, w) in zip(axes[0], weights.items()):
         top = np.argsort(w)[-k:]
         ax.barh([names[i].replace("$", r"\$") for i in top], w[top], color=COLOR)
-        ax.set_title(f"most indicative of {cls}")
-        ax.set_xlabel("weight")
+        ax.set_title(f"most indicative of {cls}"), ax.set_xlabel("weight")
+    _save(fig, path)
+
+
+def training_curves_plot(history, path):
+    epochs = np.arange(1, len(history["train_loss"]) + 1)
+    best_epoch = history["best_epoch"]
+    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+    # Loss panel
+    axes[0].plot(epochs, history["train_loss"], marker="o", label="Train loss")
+    axes[0].plot(epochs, history["dev_loss"], marker="o", label="Dev loss")
+    axes[0].set_xlabel("Epoch"), axes[0].set_ylabel("Cross-entropy loss")
+    axes[0].set_title("Training and validation loss")
+    axes[0].set_xticks(epochs)
+    axes[0].legend()
+    # Macro-F1 panel
+    axes[1].plot(epochs, history["dev_macro_f1"], marker="o", label="Dev macro-F1")
+    axes[1].axvline(best_epoch, ls="--", color="grey", label=f"Best epoch: {best_epoch}")
+    axes[1].set_xlabel("Epoch"), axes[1].set_ylabel("Macro-F1")
+    axes[1].set_ylim(0, 1)
+    axes[1].set_title("Validation performance")
+    axes[1].set_xticks(epochs)
+    axes[1].legend()
     _save(fig, path)
