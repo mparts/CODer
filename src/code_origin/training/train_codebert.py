@@ -7,7 +7,7 @@ dev run : fine-tunes on train for a fixed number of epochs (no checkpoint pickin
           to artifacts/<variant>__codebert/ and results to docs/experiments/<variant>__codebert/dev/
 test run: loads the saved model (no training) and writes .../test/. Do this once, at the very end.
 """
-import argparse, json, numpy as np, torch, pandas as pd
+import argparse, json, numpy as np, torch, pandas as pd, shutil
 
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers.utils import logging
@@ -35,6 +35,8 @@ def train():
         history = fit(model, tok, df[df.split == "train"], df[df.split == "dev"], classes, a)
         model.save_pretrained(model_dir)
         tok.save_pretrained(model_dir)
+        if a.save_ckpt:
+            shutil.copytree(model_dir, out / "checkpoint", dirs_exist_ok=True)
         return model, tok, history
     return model, tok, None
 
@@ -67,8 +69,9 @@ if __name__ == "__main__":
     ap.add_argument("--max_length",   default=ARGS["max_length"],            type=int)
     ap.add_argument("--class_weight", default=ARGS["class_weight"])
     ap.add_argument("--dropout",      default=ARGS["dropout"],               type=float)
-    ap.add_argument("--eval", action="store_true", help="Evaluate the saved model on dev")
-    ap.add_argument("--test", action="store_true", help="Evaluate the saved model on test instead of dev")
+    ap.add_argument("--eval",      action="store_true", help="Evaluate the saved model on dev")
+    ap.add_argument("--test",      action="store_true", help="Evaluate the saved model on test instead of dev")
+    ap.add_argument("--save_ckpt", action="store_true", help="also copy the trained model into the run folder")
     a = ap.parse_args()
     exp, split, model_dir, out, df, classes = cache_data(a, MODES[1])
 
@@ -85,4 +88,5 @@ if __name__ == "__main__":
         plots.roc_plot(predictions.y, predictions.score, out / "roc.png")
 
     archive_run(out, a, MODES[1])
+    shutil.rmtree(out / "checkpoint", ignore_errors=True) 
     log("Success!!", "end")

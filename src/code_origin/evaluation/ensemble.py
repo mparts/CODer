@@ -17,8 +17,11 @@ def runs(mode, model, keep):
             out.append(f.parent)
     return out
 
+bs = int(sys.argv[2]) if len(sys.argv) > 2 else 16
 ux = runs("transformer", "unixcoder",
-               lambda a: a["epochs"] == 4 and a["max_length"] == 256 and a["lr"] == 2e-5 and a.get("dropout", 0.1) == 0.0)
+          lambda a: a["epochs"] == 4 and a["max_length"] == 256 and a["lr"] == 2e-5
+                    and a.get("dropout", 0.1) == 0.0 and a["batch_size"] == bs
+                    and a.get("weight_decay", 0.01) == 0.01)
 lr = runs("baseline", "char_LogReg", lambda a: True)
 print(len(ux), "unixcoder runs,", len(lr), "char LogReg runs")
 pred_u = pd.read_parquet(ux[0] / "predictions.parquet")
