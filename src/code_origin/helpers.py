@@ -4,7 +4,7 @@ Module holding general helper functions
 from datetime import datetime
 import json, shutil
 
-from code_origin.config import ARTIFACTS_DIR, EXPERIMENTS_DIR, PROCESSED_DIR, MODES, SEED
+from code_origin.config import ARTIFACTS_DIR, EXPERIMENTS_DIR, PROCESSED_DIR, MODES, SEED, REG_STRENGTH, MAX_ITER, LR_CLASS_WEIGHTS
 from code_origin.data.loader import load_variant
 
 
@@ -33,6 +33,6 @@ def cache_data(a, mode):
 def archive_run(source, a, mode):
     exp = f"{a.variant}__{a.model}"
     split = "test" if a.test else "dev"
-    run_name = f"{SEED}_{a.epochs}_{a.max_length}_{a.lr}_{a.batch_size}_{a.weight_decay}_{a.warmup_ratio}_{a.class_weight}_{a.dropout}" if mode == MODES[1] else SEED
+    run_name = f"{a.epochs}_{a.max_length}_{a.lr}_{a.batch_size}_{a.weight_decay}_{a.warmup_ratio}_{a.class_weight}_{a.dropout}_{SEED}" if mode == MODES[1] else SEED
     out = EXPERIMENTS_DIR / "archive" / mode / str(run_name) / exp / split
     shutil.copytree(source, out, dirs_exist_ok=True)

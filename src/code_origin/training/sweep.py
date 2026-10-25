@@ -10,18 +10,19 @@ from code_origin.config import ARGS, ROOT
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--variants", nargs="+", default=[ARGS["variant"][1], ARGS["variant"][-1]])
-ap.add_argument("--seeds", nargs="+", type=int, default=[2])
-ap.add_argument("--model", default=[ARGS["transformer_models"][1]])
+ap.add_argument("--seeds", nargs="+", type=int, default=[0, 1, 2])
+ap.add_argument("--model", nargs="+", default=[ARGS["transformer_models"][1]])
 ap.add_argument("--epochs", type=int)
 ap.add_argument("--lr", type=float)
 ap.add_argument("--max_length", type=int)
 ap.add_argument("--batch_size", type=int)
 ap.add_argument("--class_weight")
 ap.add_argument("--dropout", type=float)
+ap.add_argument("--weight_decay")
 
 a = ap.parse_args()
 
-overrides = [x for k in ("epochs", "lr", "max_length", "batch_size", "class_weight", "dropout")
+overrides = [x for k in ("epochs", "lr", "max_length", "batch_size", "class_weight", "dropout", "weight_decay")
              if getattr(a, k) is not None for x in (f"--{k}", str(getattr(a, k)))]
 log_dir = ROOT / "logs"
 log_dir.mkdir(exist_ok=True)

@@ -7,7 +7,7 @@ dev run : fine-tunes on train for a fixed number of epochs (no checkpoint pickin
           to artifacts/<variant>__codebert/ and results to docs/experiments/<variant>__codebert/dev/
 test run: loads the saved model (no training) and writes .../test/. Do this once, at the very end.
 """
-import argparse, json, numpy as np, torch
+import argparse, json, numpy as np, torch, pandas as pd
 
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers.utils import logging
@@ -80,6 +80,7 @@ if __name__ == "__main__":
     plots.group_accuracy_plot(predictions, out / "accuracy_by_source.png")
     if history is not None:
         plots.training_curves_plot(history, out / "training_curves.png")
+        pd.DataFrame(history["curve"]).to_csv(out / "curve.csv", index=False)
     if len(classes) == 2:
         plots.roc_plot(predictions.y, predictions.score, out / "roc.png")
 

@@ -72,21 +72,19 @@ def top_features_plot(clf, classes, path, k=15):
 
 def training_curves_plot(history, path):
     epochs = np.arange(1, len(history["train_loss"]) + 1)
-    best_epoch = history["best_epoch"]
+    c = history.get("curve")
+    x = np.asarray(c["epoch"]) if c else epochs
+    series = (lambda k: c[k]) if c else (lambda k: history[k])
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-    # Loss panel
-    axes[0].plot(epochs, history["train_loss"], marker="o", label="Train loss")
-    axes[0].plot(epochs, history["dev_loss"], marker="o", label="Dev loss")
-    axes[0].set_xlabel("Epoch"), axes[0].set_ylabel("Cross-entropy loss")
-    axes[0].set_title("Training and validation loss")
-    axes[0].set_xticks(epochs)
-    axes[0].legend()
-    # Macro-F1 panel
-    axes[1].plot(epochs, history["dev_macro_f1"], marker="o", label="Dev macro-F1")
-    axes[1].axvline(best_epoch, ls="--", color="grey", label=f"Best epoch: {best_epoch}")
-    axes[1].set_xlabel("Epoch"), axes[1].set_ylabel("Macro-F1")
-    axes[1].set_ylim(0, 1)
-    axes[1].set_title("Validation performance")
-    axes[1].set_xticks(epochs)
-    axes[1].legend()
+    axes[0].plot(x, series("train_loss"), marker="o", ms=3, label="Train loss (since last eval)")
+    axes[0].plot(x, series("dev_loss"), marker="o", ms=3, label="Dev loss")
+    axes[0].set(xlabel="Epoch", ylabel="Cross-entropy loss", title="Training and validation loss")
+    axes[1].plot(x, series("dev_macro_f1"), marker="o", ms=3, label="Dev macro-F1")
+    if c:  # larger markers at the epoch ends: the only points used for checkpoint selection
+        axes[1].plot(epochs, history["dev_macro_f1"], ls="none", marker="o", ms=7, mfc="none", color="black", label="Epoch end")
+    axes[1].axvline(history["best_epoch"], ls="--", color="grey", label=f"Best epoch: {history['best_epoch']}")
+    axes[1].set(xlabel="Epoch", ylabel="Macro-F1", ylim=(0, 1), title="Validation performance")
+    for ax in axes:
+        ax.set_xticks(epochs)
+        ax.legend()
     _save(fig, path)

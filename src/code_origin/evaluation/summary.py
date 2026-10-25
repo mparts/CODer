@@ -4,13 +4,15 @@ from code_origin.config import EXPERIMENTS_DIR, METRIC_COLUMNS, HYPERPARAMETERS,
 
 
 def _get_hyperparameters(run_path: Path, mode: str) -> dict:
-    """Extract hyperparameters from an archived run's directory name."""
+    """Extract hyperparameters and seed from an archived run's directory name."""
     parts = run_path.name.split("_")
-    if mode == "baseline":
+    if mode == MODES[0]:
         return {"seed": parts[0]}
-    if len(parts) != len(HYPERPARAMETERS):
+    if len(parts) != len(HYPERPARAMETERS) + 1:
         raise ValueError(f"Unexpected run directory name: {run_path.name}")
-    return dict(zip(HYPERPARAMETERS, parts))
+    params = dict(zip(HYPERPARAMETERS, parts[:-1]))
+    params["seed"] = parts[-1]
+    return params
 
 def _varying_hyperparameters(runs: list[dict]) -> list[str]:
     """Return hyperparameters with more than one distinct value across runs."""
@@ -37,7 +39,7 @@ def _save_summary(rows: list[dict], output_path: Path, hyperparameter_columns: l
     if not rows:
         return
     columns = (["experiment", "split"] + hyperparameter_columns + ["seeds", "n", "accuracy", "macro_f1"])
-    table = pd.DataFrame(rows).reindex(columns=columns).round(3)
+    table = (pd.DataFrame(rows).rename(columns={"seed": "seeds"}).reindex(columns=columns).round(3))
     if table["macro_f1"].astype(str).str.contains(" ± ").any():
         table["_sort_f1"] = table["macro_f1"].apply(lambda x: float(str(x).split(" ± ")[0]))
         table = table.sort_values("_sort_f1", ascending=False)
@@ -56,6 +58,7 @@ def _aggregate_seeds(rows: list[dict], hyperparameter_columns: list[str]) -> lis
         ranked = group.sort_values("macro_f1", ascending=False)
         row = {key: ranked.iloc[0][key] for key in group_columns}
         row["seeds"] = ",".join(str(seed) for seed in ranked["seed"].tolist())
+        row["n"] = int(group["n"].iloc[0])   # same eval set size across seeds
         for metric in ("accuracy", "macro_f1"):
             row[metric] = (
                 f"{group[metric].mean():.3f} "
@@ -72,7 +75,7 @@ def summarize(modes: list | None = None, init_path: Path = EXPERIMENTS_DIR, arch
     if archive:
         archive_path = init_path / "archive"
         all_rows, archive_hyperparameters = [], []
-        for mode in ("baseline", "transformer"):
+        for mode in MODES:
             mode_path = archive_path / mode
             if not mode_path.exists():
                 print(f"no experiments found in {mode_path}")

@@ -43,25 +43,19 @@ ARGS = {
     "weight_decay": 0.01,
     "warmup_ratio": 0.1,
     "class_weight": "none",
-    "dropout": 0.1,
+    "dropout": 0.0,
 }
 # summary
 METRIC_COLUMNS = ["experiment", "split", "n", "accuracy", "macro_f1"]
-# HYPERPARAMETERS = [
-#     "seed",
-#     "epochs",
-#     "max_length",
-#     "lr",
-#     "batch_size",
-#     "weight_decay",
-#     "warmup_ratio",
-#     "class_weight",
-# ]
-HYPERPARAMETERS = ["seed"] + list(ARGS.keys())[3:]
+HYPERPARAMETERS = list(ARGS.keys())[3:]
 
 # == Plotting ====================================
 COLOR = "#3b6ea5"
 
+# == Baseline =======================================
+REG_STRENGTH = 10
+MAX_ITER = 2000
+LR_CLASS_WEIGHTS = "balanced"
 
 # == Transformer =======================================
 CHECKPOINTS = {"codebert": "microsoft/codebert-base",
@@ -69,4 +63,4 @@ CHECKPOINTS = {"codebert": "microsoft/codebert-base",
                "graphcodebert": "microsoft/graphcodebert-base",}
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-TEST = ["seed"] + list(ARGS.keys())[3:]
+
