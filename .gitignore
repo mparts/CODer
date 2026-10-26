@@ -230,3 +230,6 @@ data/*
 !run/run.log
 
 docs/experiments/
+
+!docs/reports/code_paper.md
+docs/reports/

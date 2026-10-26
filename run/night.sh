@@ -1,16 +1,11 @@
 #!/usr/bin/env bash
-cd "$(dirname "$0")/.."            # project root (this file lives in run/)
+# run/night.sh: final UniXcoder runs, one sweep (and one log) per variant
+cd "$(dirname "$0")/.."
 export PYTHONPATH=src
-# SW="python3 -m code_origin.training.sweep --model unixcoder --seeds 0 1 2 --class_weight none --batch_size 16"
-# $SW --max_length 256 --lr 2e-5 --epochs 6 --dropout 0.0
-# $SW --max_length 256 --lr 2e-5 --epochs 4 --dropout 0.0
-# $SW --max_length 384 --lr 2e-5 --epochs 4                    # 2. longer context
-# $SW --max_length 256 --lr 2e-5 --epochs 4 --dropout 0.2      # 3. dropout
-# $SW --max_length 256 --lr 3e-5 --epochs 4                    # 4. higher lr
-# $SW --max_length 256 --lr 2e-5 --epochs 6                    # 5. more epochs
-# $SW --max_length 256 --lr 1e-5 --epochs 6                    # 6. lower lr, more epochs
 
-SW="python3 -m code_origin.training.sweep --model unixcoder --seeds 0 1 2 --class_weight none --max_length 256 --lr 2e-5 --epochs 4 --dropout 0.0"
-$SW --weight_decay 0.1
-$SW --batch_size 8
-$SW --batch_size 32
+for v in binary binary_generate multiclass multiclass_generate; do
+  python3 -m code_origin.training.sweep --model unixcoder --seeds 3 4 5 6 7 8 \
+    --variants $v \
+    --max_length 256 --lr 2e-5 --epochs 4 --dropout 0.0 --batch_size 16 \
+    --weight_decay 0.01 --warmup_ratio 0.1 --class_weight none --with_test --save_ckpt
+done

@@ -66,7 +66,7 @@ def fit(model, tok, train, dev, classes, a):
         model.train()
         total_loss, n_seen = 0.0, 0
         int_loss, int_n = 0.0, 0
-        for i, b in enumerate(tqdm(train_loader, desc=f"Epoch {epoch + 1}/{a.epochs}", unit="batch", ncols=100, colour="green"), 1):
+        for i, b in enumerate(tqdm(train_loader, desc=f"Epoch {epoch + 1}/{a.epochs}", unit="batch", colour="green", dynamic_ncols=True), 1):
             b = {k: v.to(DEVICE) for k, v in b.items()}
             labels = b.pop("labels")
             opt.zero_grad(set_to_none=True)
