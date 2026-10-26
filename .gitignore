@@ -231,5 +231,5 @@ data/*
 
 docs/experiments/
 
-!docs/reports/code_paper.md
-docs/reports/
+docs/reports/*
+!docs/reports/coder_paper*
