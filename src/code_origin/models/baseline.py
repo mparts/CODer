@@ -1,14 +1,12 @@
-"""
-Baseline classifiers (scikit-learn).
-"""
+"""TF-IDF logistic regression baselines on word or character n-grams."""
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from code_origin.config import BASE_MODELS, SEED, REG_STRENGTH, MAX_ITER, LR_CLASS_WEIGHTS
 
 
-def show_whitespace(text): # the char vectorizer collapses runs of whitespace, so make layout visible first
-    return text.replace("\n", "¶").replace("\t", "→").replace(" ", "·")
+def show_whitespace(text): # the char analyzer collapses whitespace runs, visible glyphs keep the layout
+    return text.replace("\n", "\u00b6").replace("\t", "\u2192").replace(" ", "\u00b7")
 
 
 def make_baseline(name, seed=SEED):

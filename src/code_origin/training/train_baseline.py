@@ -1,10 +1,12 @@
-"""Fit a baseline on the train split of one variant, evaluate it on dev (or test) and save everything.
+"""Train a LogReg baseline on one variant, evaluate it on dev or test and save the results.
 
-    PYTHONPATH=src python -m code_origin.training.train --variant human_vs_ai --model tfidf_char
+    PYTHONPATH=src python3 -m code_origin.training.train_baseline --variant binary --model char_LogReg
+    PYTHONPATH=src python3 -m code_origin.training.train_baseline --variant binary --model char_LogReg --test
 
-dev run : fits on train, saves the model to artifacts/<experiment>/
-          and metrics, predictions and plots to docs/experiments/<experiment>/dev/
-test run: loads that saved model and writes docs/experiments/<experiment>/test/.
+dev run : fits on train, saves the model to artifacts/<variant>__<model>/
+          and metrics, predictions and plots to docs/experiments/baseline/<variant>__<model>/dev/
+test run: loads that saved model and writes docs/experiments/baseline/<variant>__<model>/test/
+Both runs are also copied to docs/experiments/archive/baseline/<seed>/<variant>__<model>/.
 """
 import argparse, json, joblib, shutil, numpy as np
 
@@ -15,6 +17,7 @@ from code_origin.models.baseline import make_baseline
 
 
 def train():
+    """Fit a new model, or load the saved one for --eval/--test."""
     if a.test or a.eval:
         if not model_dir.exists():
             raise SystemExit(f"no saved model at {model_dir}, run the dev run first")
@@ -71,5 +74,5 @@ if __name__ == "__main__":
         plots.roc_plot(predictions.y, predictions.score, out / "roc.png")
 
     archive_run(out, a, MODES[0])
-    shutil.rmtree(out / "checkpoint", ignore_errors=True)
+    shutil.rmtree(out / "checkpoint", ignore_errors=True) # the checkpoint copy only stays in the archive
     log("Success!!", "end")

@@ -1,8 +1,10 @@
 """Raw AIGCodeSet -> cleaned dataset with problem-grouped splits and task variants in data/processed.
 
 Columns of the output files:
+    uid                        row id
     code_raw, code_norm        model input
-    y                          target (class names are in meta.json)
+    y                          target, variants only (class names are in meta.json)
+    origin                     human or ai, all.parquet only
     split, fold, problem_id    train/dev/test, fold 0-9, group id
     conflict                   same code appears with both labels
     meta_*                     info that leaks the label (status, source, parent, LLM): analysis only
@@ -27,7 +29,7 @@ def code_hash(code):
 
 
 def add_split(df):
-    # 10 folds grouped by problem, stratified by source. folds 0-1 test, 2 dev, rest train
+    # 10 folds grouped by problem, stratified by LLM: folds 0-1 test, 2 dev, 3-9 train
     fold = np.zeros(len(df), dtype=int)
     sgkf = StratifiedGroupKFold(n_splits=10, shuffle=True, random_state=SEED)
     for i, (_, idx) in enumerate(sgkf.split(df, df.LLM, df.problem_id)):
@@ -50,6 +52,7 @@ def preprocess():
     assert df.groupby("code_hash").split.nunique().max() == 1
 
     df["origin"] = df.label.map({0: "human", 1: "ai"})
+    # for AI code, submission_id is "unrelated" or the human submission it edits
     df["meta_source"] = np.where(df.label == 0, "human", np.where(df.submission_id == "unrelated", "generate", "edit"))
     df["meta_parent_id"] = df.submission_id.where(df.meta_source == "edit")
     df = df.rename(columns={"code": "code_raw", "LLM": "meta_LLM", "status_in_folder": "meta_status"})

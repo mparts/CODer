@@ -1,6 +1,4 @@
-"""
-Module holding configs
-"""
+"""Project-wide settings: paths, dataset variants, models and hyperparameters."""
 from pathlib import Path
 import torch, os
 ROOT = Path(__file__).resolve().parents[2]
@@ -30,9 +28,9 @@ BASE_MODELS = ["word_LogReg", "char_LogReg"]
 TRANSFORMER_MODELS = ["codebert", "unixcoder", "graphcodebert"]
 
 # == General ================================================
-SEED = int(os.environ.get("SEED", 0))
+SEED = int(os.environ.get("SEED", 0)) # set per transformer run, data splits and baselines use the default 0
 MODES = ["baseline", "transformer"]
-ARGS = {
+ARGS = { # choices and defaults of the training CLIs, hyperparameters as in the final UniXcoder runs
     "baseline_models": BASE_MODELS ,
     "transformer_models": TRANSFORMER_MODELS,
     "variant": list(VARIANTS.keys()),
@@ -45,15 +43,16 @@ ARGS = {
     "class_weight": "none",
     "dropout": 0.0,
 }
-# summary
+
+# == Summary ====================================
 METRIC_COLUMNS = ["experiment", "split", "n", "accuracy", "macro_f1"]
-HYPERPARAMETERS = list(ARGS.keys())[3:]
+HYPERPARAMETERS = list(ARGS.keys())[3:] # keys from "epochs" on, archive run names join their values in this order
 
 # == Plotting ====================================
 COLOR = "#3b6ea5"
 
 # == Baseline =======================================
-REG_STRENGTH = 10
+REG_STRENGTH = 10 # LogReg C, the inverse of the regularization strength
 MAX_ITER = 2000
 LR_CLASS_WEIGHTS = "balanced"
 
@@ -61,6 +60,7 @@ LR_CLASS_WEIGHTS = "balanced"
 CHECKPOINTS = {"codebert": "microsoft/codebert-base",
                "unixcoder": "microsoft/unixcoder-base",
                "graphcodebert": "microsoft/graphcodebert-base",}
+EVALS_PER_EPOCH = 5 # for the learning curves only, checkpoints are picked at epoch ends
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 

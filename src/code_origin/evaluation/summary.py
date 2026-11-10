@@ -1,3 +1,4 @@
+"""Collect run metrics into summary.csv tables, per mode or over the whole archive."""
 import argparse, json, pandas as pd
 from pathlib import Path
 from code_origin.config import EXPERIMENTS_DIR, METRIC_COLUMNS, HYPERPARAMETERS, MODES
@@ -15,7 +16,6 @@ def _get_hyperparameters(run_path: Path, mode: str) -> dict:
     return params
 
 def _varying_hyperparameters(runs: list[dict]) -> list[str]:
-    """Return hyperparameters with more than one distinct value across runs."""
     if not runs:
         return []
     return [key for key in HYPERPARAMETERS if len({run["params"].get(key) for run in runs}) > 1]
@@ -35,13 +35,14 @@ def _collect_rows(metrics_files, params: dict) -> list[dict]:
     return rows
 
 def _save_summary(rows: list[dict], output_path: Path, hyperparameter_columns: list[str]):
-    """Sort and save a summary with the requested columns."""
+    """Save rows as CSV, sorted by macro-F1, with the given hyperparameter columns."""
     if not rows:
         return
     columns = (["experiment", "split"] + hyperparameter_columns + ["seeds", "n", "accuracy", "macro_f1"])
     table = (pd.DataFrame(rows).rename(columns={"seed": "seeds"}).reindex(columns=columns).round(3))
-    if table["macro_f1"].astype(str).str.contains(" ± ").any():
-        table["_sort_f1"] = table["macro_f1"].apply(lambda x: float(str(x).split(" ± ")[0]))
+    # aggregated rows hold "mean \u00b1 std" strings
+    if table["macro_f1"].astype(str).str.contains(" \u00b1 ").any():
+        table["_sort_f1"] = table["macro_f1"].apply(lambda x: float(str(x).split(" \u00b1 ")[0]))
         table = table.sort_values("_sort_f1", ascending=False)
         table = table.drop(columns="_sort_f1")
     else:
@@ -62,15 +63,16 @@ def _aggregate_seeds(rows: list[dict], hyperparameter_columns: list[str]) -> lis
         for metric in ("accuracy", "macro_f1"):
             row[metric] = (
                 f"{group[metric].mean():.3f} "
-                f"± {group[metric].std(ddof=1):.3f}"
+                f"\u00b1 {group[metric].std(ddof=1):.3f}"
                 if len(group) > 1
-                else f"{group[metric].mean():.3f} ± 0.000"
+                else f"{group[metric].mean():.3f} \u00b1 0.000"
             )
         aggregated.append(row)
     return aggregated
 
 
 def summarize(modes: list | None = None, init_path: Path = EXPERIMENTS_DIR, archive: bool = False):
+    """Write summary.csv per mode and overall, or with archive=True per run, per mode and for the whole archive. Print the overall table."""
     init_path = Path(init_path)
     if archive:
         archive_path = init_path / "archive"
@@ -105,7 +107,7 @@ def summarize(modes: list | None = None, init_path: Path = EXPERIMENTS_DIR, arch
         aggregated_all_rows = _aggregate_seeds(all_rows, archive_hyperparameters)
         _save_summary(aggregated_all_rows, archive_path / "summary.csv", archive_hyperparameters)
         table = pd.DataFrame(aggregated_all_rows)
-        table["_macro_f1_mean"] = table["macro_f1"].apply(lambda x: float(x.split(" ± ")[0]))
+        table["_macro_f1_mean"] = table["macro_f1"].apply(lambda x: float(x.split(" \u00b1 ")[0]))
         table = table.sort_values("_macro_f1_mean", ascending=False)
         table = table.drop(columns="_macro_f1_mean")
         print(table.to_string(index=False))

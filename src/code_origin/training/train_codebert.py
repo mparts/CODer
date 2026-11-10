@@ -1,11 +1,12 @@
-"""Fine-tune CodeBERT on one variant. Same outputs and folders as train.py.
+"""Fine-tune a transformer on one variant, evaluate it on dev or test and save the results.
 
-    PYTHONPATH=src python -m code_origin.training.train_codebert --variant binary
-    PYTHONPATH=src python -m code_origin.training.train_codebert --variant binary --test
+    PYTHONPATH=src python3 -m code_origin.training.train_codebert --variant binary --model unixcoder
+    PYTHONPATH=src python3 -m code_origin.training.train_codebert --variant binary --model unixcoder --test
 
-dev run : fine-tunes on train for a fixed number of epochs (no checkpoint picking), saves the model
-          to artifacts/<variant>__codebert/ and results to docs/experiments/<variant>__codebert/dev/
-test run: loads the saved model (no training) and writes .../test/. Do this once, at the very end.
+dev run : fine-tunes on train, keeps the epoch with the best dev macro-F1, saves the model
+          to artifacts/<variant>__<model>/ and results to docs/experiments/transformer/<variant>__<model>/dev/
+test run: loads the saved model (from --model_dir if given) and writes .../test/. Do this once, at the very end.
+Both runs are also copied to docs/experiments/archive/transformer/<hyperparameters>_<seed>/<variant>__<model>/.
 """
 import argparse, json, numpy as np, torch, pandas as pd, shutil
 from pathlib import Path
@@ -20,6 +21,7 @@ from code_origin.evaluation import plots, evaluate
 
 
 def train():
+    """Fine-tune a new model, or load the saved one for --eval/--test."""
     if a.test or a.eval:
         if not model_dir.exists():
             raise SystemExit(f"no saved model at {model_dir}, run the dev run first")
@@ -91,5 +93,5 @@ if __name__ == "__main__":
         plots.roc_plot(predictions.y, predictions.score, out / "roc.png")
 
     archive_run(out, a, MODES[1])
-    shutil.rmtree(out / "checkpoint", ignore_errors=True) 
+    shutil.rmtree(out / "checkpoint", ignore_errors=True) # the checkpoint copy only stays in the archive
     log("Success!!", "end")

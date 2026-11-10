@@ -1,6 +1,4 @@
-"""
-Quick checks on the processed dataset: composition, split leakage, formatting artifacts.
-"""
+"""Checks on the processed dataset: composition, split leakage, formatting artifacts."""
 import numpy as np, pandas as pd
 from sklearn.metrics import roc_auc_score
 
@@ -36,7 +34,7 @@ def artifacts(df):
     }).astype(float)
     table = feats.groupby(df.meta_LLM).mean().T
     auc = [roc_auc_score(df.origin == "ai", feats[c]) for c in feats]
-    table["auc_human_vs_ai"] = [max(a, 1 - a) for a in auc]
+    table["auc_human_vs_ai"] = [max(a, 1 - a) for a in auc] # either direction counts, 0.5 is chance
     print(table.round(3))
 
 

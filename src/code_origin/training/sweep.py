@@ -1,6 +1,6 @@
-"""Run models over several variants and seeds, logging everything to one file.
+"""Train transformers over several seeds, models and variants, logging to logs/sweep_<time>.log.
 
-    PYTHONPATH=src python -m code_origin.training.sweep --model unixcoder --seeds 0 1 2 3 4 \
+    PYTHONPATH=src python3 -m code_origin.training.sweep --model unixcoder --seeds 0 1 2 3 4 \
         --variants binary_generate multiclass_generate --with_test --save_ckpt
 """
 import argparse, os, shlex, subprocess, sys
@@ -25,6 +25,7 @@ ap.add_argument("--with_test", action="store_true", help="after each training ru
 ap.add_argument("--save_ckpt", action="store_true", help="keep the checkpoint next to the run's metrics and plots")
 a = ap.parse_args()
 
+# flags for the given hyperparameters only, the rest keep train_codebert's defaults
 overrides = [x for k in ("epochs", "lr", "max_length", "batch_size", "class_weight", "dropout", "weight_decay", "warmup_ratio")
              if getattr(a, k) is not None for x in (f"--{k}", str(getattr(a, k)))]
 log_dir = ROOT / "logs"
@@ -37,6 +38,7 @@ def run(cmd, env, header):
     with log.open("a") as f:
         f.write(header)
     r = subprocess.run(["bash", "-c", f"set -o pipefail; {shlex.join(cmd)} 2>&1 | tee -a {shlex.quote(str(log))}"], env=env)
+    # drop the tqdm progress lines from the log
     subprocess.run(["sed", "-i", r"/^[[:space:]]*Epoch/d", str(log)], check=True)
     return r.returncode
 

@@ -1,5 +1,7 @@
-# src/code_origin/evaluation/ensemble.py
-# PYTHONPATH=src python3 -m code_origin.evaluation.ensemble binary_generate
+"""Dev macro-F1 of the UniXcoder seed average mixed with char LogReg at several weights.
+
+    PYTHONPATH=src python3 -m code_origin.evaluation.ensemble binary_generate [batch_size]
+"""
 import json, sys
 import numpy as np, pandas as pd
 from sklearn.metrics import f1_score
@@ -17,7 +19,8 @@ def runs(mode, model, keep):
             out.append(f.parent)
     return out
 
-bs = int(sys.argv[2]) if len(sys.argv) > 2 else 16
+bs = int(sys.argv[2]) if len(sys.argv) > 2 else 16 # batch size of the UniXcoder runs to average
+# older runs lack some args, the .get defaults are their old values
 ux = runs("transformer", "unixcoder",
           lambda a: a["epochs"] == 4 and a["max_length"] == 256 and a["lr"] == 2e-5
                     and a.get("dropout", 0.1) == 0.0 and a["batch_size"] == bs

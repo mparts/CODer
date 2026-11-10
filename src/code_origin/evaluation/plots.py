@@ -1,6 +1,4 @@
-"""
-Plots saved with every experiment.
-"""
+"""Plots saved with every experiment."""
 
 import matplotlib
 matplotlib.use("Agg")
@@ -36,7 +34,7 @@ def group_accuracy_plot(preds, path):
     group = np.where(preds.meta_source == "human", "Human", preds.meta_LLM + " (" + preds.meta_source + ")")
     correct = (preds.y == preds.pred).groupby(group).agg(["mean", "size"])
     order = ["Human"] + [f"{l} ({s})" for l in LLMS for s in ("generate", "edit")]
-    correct = correct.loc[[g for g in order if g in correct.index][::-1]]
+    correct = correct.loc[[g for g in order if g in correct.index][::-1]] # reversed because barh draws bottom-up
     fig, ax = plt.subplots(figsize=(7, 0.55 * len(correct) + 1.5))
     ax.barh(correct.index, correct["mean"], color=COLOR)
     for i, (m, n) in enumerate(zip(correct["mean"], correct["size"])):
@@ -61,11 +59,12 @@ def roc_plot(y, score, path):
 def top_features_plot(clf, classes, path, k=15):
     names = clf[0].get_feature_names_out()
     coef = clf[-1].coef_
+    # binary LogReg has one coef row, for classes[1]
     weights = {classes[1]: coef[0], classes[0]: -coef[0]} if len(classes) == 2 else dict(zip(classes, coef))
     fig, axes = plt.subplots(1, len(weights), figsize=(4.5 * len(weights), 0.32 * k + 1.5), squeeze=False)
     for ax, (cls, w) in zip(axes[0], weights.items()):
         top = np.argsort(w)[-k:]
-        ax.barh([names[i].replace("$", r"\$") for i in top], w[top], color=COLOR)
+        ax.barh([names[i].replace("$", r"\$") for i in top], w[top], color=COLOR) # "$" would start matplotlib mathtext
         ax.set_title(f"most indicative of {cls}"), ax.set_xlabel("weight")
     _save(fig, path)
 

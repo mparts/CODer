@@ -1,5 +1,7 @@
-# src/code_origin/evaluation/final_eval.py
-# PYTHONPATH=src python3 -m code_origin.evaluation.final_eval binary_generate
+"""Table 2: test macro-F1 of UniXcoder, the LogReg baselines and the UniXcoder + char LogReg mix, with bootstrap CIs for the gaps to char LogReg.
+
+    PYTHONPATH=src python3 -m code_origin.evaluation.final_eval binary_generate
+"""
 import sys
 import numpy as np, pandas as pd
 from sklearn.metrics import f1_score
@@ -25,7 +27,7 @@ f1 = lambda yy, p: f1_score(yy, p.argmax(1), average="macro", labels=labels, zer
 
 single = [f1(y, p) for p in P]
 log(f"{v}: {len(ux)} seeds", "start")
-print(f"UniXcoder single seed   {np.mean(single):.3f} ± {np.std(single, ddof=1):.3f}")
+print(f"UniXcoder single seed   {np.mean(single):.3f} \u00b1 {np.std(single, ddof=1):.3f}")
 print(f"UniXcoder seed ensemble {f1(y, pe):.3f}")
 print(f"char LogReg             {f1(y, pc):.3f}")
 print(f"word LogReg             {f1(y, pw):.3f}")

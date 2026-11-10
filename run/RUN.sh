@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# Script: RUN.sh
-# Description: Runs the CODer pipeline. Logs all output.
+# Description: Runs the CODer pipeline. Logs all output to run.log.
 # Usage: bash RUN.sh            stages as set in run.conf
 #        bash RUN.sh og.conf    the original experiment from scratch
 #        bash RUN.sh hub.conf   test predictions from the Hugging Face data and checkpoints
@@ -60,7 +59,7 @@ else
     echo "$LINE" | tee -a "$LOG_FILE"
     run_step $DOWNLOAD_DATASET data.download
     run_step $PREPROCESS_DATASET data.preprocess
-    fetch $FETCH_DATA "$DATA_REPO" dataset "*.parquet" ../data/processed
+    fetch $FETCH_DATA "$DATA_REPO" dataset "*.parquet" ../data/processed # meta.json is already in the repo
     run_step $PRINT_DATASET_STATS data.audit
 fi
 
@@ -92,7 +91,7 @@ else
         run_step true training.sweep --model $TRANSFORMER_MODELS --seeds $SEEDS --variants "$v" \
             --max_length 256 --lr 2e-5 --epochs 4 --dropout 0.0 --batch_size 16 \
             --weight_decay 0.01 --warmup_ratio 0.1 --class_weight none --with_test --save_ckpt
-        sed -i '/^[[:space:]]*Epoch/d' "$LOG_FILE"
+        sed -i '/^[[:space:]]*Epoch/d' "$LOG_FILE" # drop the tqdm progress lines from the log
     done
 fi
 
@@ -108,6 +107,7 @@ else
         section "Seed $s"
         for v in $DATASETS; do
             fetch true "$CKPT_REPO" model "seed$s/$v/*" ../artifacts/CODer-unixcoder
+            # SEED picks the archive folder the test predictions go to
             SEED=$s run_step true training.train_codebert --variant "$v" --model unixcoder --test \
                 --model_dir "../artifacts/CODer-unixcoder/seed$s/$v"
         done

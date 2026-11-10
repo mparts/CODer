@@ -1,5 +1,7 @@
-# src/code_origin/evaluation/breakdown.py
-# PYTHONPATH=src python3 -m code_origin.evaluation.breakdown multiclass
+"""Table 5 and section 4.4: per-class and per-source test results of the UniXcoder ensemble, char LogReg and their mix.
+
+    PYTHONPATH=src python3 -m code_origin.evaluation.breakdown multiclass
+"""
 import sys, json
 import numpy as np, pandas as pd
 from sklearn.metrics import precision_recall_fscore_support
@@ -26,7 +28,7 @@ for name, pred in models.items():
 
 res = {}
 for name, pred in models.items():
-    d = pd.DataFrame({"group": group, "correct": pred == y, "flagged AI": pred != 0})
+    d = pd.DataFrame({"group": group, "correct": pred == y, "flagged AI": pred != 0}) # class 0 is human in every variant
     g = d.groupby("group")
     res[(name, "correct")], res[(name, "flagged AI")] = g.correct.mean(), g["flagged AI"].mean()
 res = pd.DataFrame(res)

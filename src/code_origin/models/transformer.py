@@ -1,3 +1,4 @@
+"""Fine-tuning and prediction for the transformer classifiers."""
 from tqdm import tqdm
 
 import numpy as np
@@ -11,7 +12,7 @@ from torch.nn.functional import cross_entropy
 
 from transformers import get_linear_schedule_with_warmup
 
-from code_origin.config import DEVICE
+from code_origin.config import DEVICE, EVALS_PER_EPOCH
 from code_origin.evaluation.evaluate import evaluate
 
 
@@ -20,8 +21,6 @@ def batches(tok, texts, labels, batch_size, max_length, shuffle):
     items = [{"input_ids": enc["input_ids"][i], "attention_mask": enc["attention_mask"][i], "labels": int(labels[i])} for i in range(len(texts))]
     return DataLoader(items, batch_size=batch_size, shuffle=shuffle, collate_fn=lambda b: tok.pad(b, return_tensors="pt"))
 
-
-EVALS_PER_EPOCH = 5   # logging only; checkpoint selection still happens at epoch ends
 
 
 @torch.no_grad()
@@ -42,6 +41,7 @@ def dev_pass(model, dev_loader, classes):
 
 
 def fit(model, tok, train, dev, classes, a):
+    """Train, restore the epoch with the best dev macro-F1 into model, return the history."""
     train_loader = batches(tok, train.code_norm, train.y.values, a.batch_size, a.max_length, shuffle=True)
     dev_loader = batches(tok, dev.code_norm, dev.y.values, 64, a.max_length, shuffle=False)
     n_classes = len(classes)
@@ -57,7 +57,7 @@ def fit(model, tok, train, dev, classes, a):
     n_batches = len(train_loader)
     steps = a.epochs * n_batches
     sched = get_linear_schedule_with_warmup(opt, int(a.warmup_ratio * steps), steps)
-    # batch indices (1-based) at which dev is evaluated; the last one is the epoch end
+    # 1-based batch indices to evaluate dev at, the last is the epoch end
     eval_at = {max(1, round(n_batches * k / EVALS_PER_EPOCH)) for k in range(1, EVALS_PER_EPOCH + 1)}
     history = {"train_loss": [], "dev_loss": [], "dev_macro_f1": [],
                "curve": {"epoch": [], "train_loss": [], "dev_loss": [], "dev_macro_f1": []}}
@@ -65,7 +65,7 @@ def fit(model, tok, train, dev, classes, a):
     for epoch in range(a.epochs):
         model.train()
         total_loss, n_seen = 0.0, 0
-        int_loss, int_n = 0.0, 0
+        int_loss, int_n = 0.0, 0 # train loss since the last dev eval
         for i, b in enumerate(tqdm(train_loader, desc=f"Epoch {epoch + 1}/{a.epochs}", unit="batch", colour="green", dynamic_ncols=True), 1):
             b = {k: v.to(DEVICE) for k, v in b.items()}
             labels = b.pop("labels")

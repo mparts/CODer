@@ -1,6 +1,4 @@
-"""
-Download dataset from the HF hub once and keep a local copy in data/raw.
-"""
+"""Download AIGCodeSet from the HF Hub into data/raw, once."""
 import json
 import numpy as np
 from datasets import load_dataset
@@ -18,7 +16,7 @@ def download():
     train, test = ds["train"].to_pandas(), ds["test"].to_pandas()
 
     cols = [c for c in train.columns if c != "ada_embedding"]
-    # train and test was identical so we drop one
+    # the Hub's train and test splits are identical, so only train is kept
     if not train[cols].equals(test[cols]):
         raise RuntimeError("train and test differ, the dataset has changed. check it before using it")
 

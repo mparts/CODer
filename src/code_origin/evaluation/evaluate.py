@@ -1,6 +1,4 @@
-"""
-Metrics for the classification tasks.
-"""
+"""Metrics for the classification tasks."""
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_fscore_support
 
 
