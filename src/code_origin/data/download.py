@@ -31,4 +31,4 @@ def download():
 if __name__ == "__main__":
     log(f"Downloading dataset from {REPO}...", "start")
     download()
-    log(f"Done!!", "end")
+    log("Done!!", "end")

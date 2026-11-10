@@ -60,7 +60,7 @@ def eval(model, tok):
 
 
 if __name__ == "__main__":
-    logging.set_verbosity_error() 
+    logging.set_verbosity_error()
     ap = argparse.ArgumentParser()
     ap.add_argument("--model",        default=ARGS["transformer_models"][0], choices=ARGS["transformer_models"])
     ap.add_argument("--variant",      default=ARGS["variant"][0],            choices=ARGS["variant"])

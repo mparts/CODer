@@ -25,11 +25,10 @@ def _collect_rows(metrics_files, params: dict) -> list[dict]:
     rows = []
     for f in sorted(metrics_files):
         m = json.loads(f.read_text())
-        row = {key: m[key] for key in METRIC_COLUMNS}
         row = {
-            **{key: row[key] for key in ("experiment", "split")},
+            **{key: m[key] for key in METRIC_COLUMNS[:2]},  # experiment, split
             **params,
-            **{key: row[key] for key in ("n", "accuracy", "macro_f1")},
+            **{key: m[key] for key in METRIC_COLUMNS[2:]},  # n, accuracy, macro_f1
         }
         rows.append(row)
     return rows
@@ -98,7 +97,7 @@ def summarize(modes: list | None = None, init_path: Path = EXPERIMENTS_DIR, arch
                 print(f"no experiments found in {mode_path}")
                 continue
             aggregated_rows = _aggregate_seeds(mode_rows, varying)
-            _save_summary(aggregated_rows, mode_path / "summary.csv", varying)   
+            _save_summary(aggregated_rows, mode_path / "summary.csv", varying)
             archive_hyperparameters.extend(varying)
         if not all_rows:
             print("no experiments found in archive")

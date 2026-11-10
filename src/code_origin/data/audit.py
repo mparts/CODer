@@ -44,4 +44,4 @@ if __name__ == "__main__":
     composition(df)
     leakage(df)
     artifacts(df)
-    log("Statistics succesfully gathered!!", "end")
+    log("Statistics successfully gathered!!", "end")

@@ -2,7 +2,7 @@
 from datetime import datetime
 import json, shutil
 
-from code_origin.config import ARTIFACTS_DIR, EXPERIMENTS_DIR, PROCESSED_DIR, MODES, SEED, REG_STRENGTH, MAX_ITER, LR_CLASS_WEIGHTS
+from code_origin.config import ARTIFACTS_DIR, EXPERIMENTS_DIR, PROCESSED_DIR, MODES, SEED
 from code_origin.data.loader import load_variant
 
 

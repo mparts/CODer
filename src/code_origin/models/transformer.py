@@ -22,7 +22,6 @@ def batches(tok, texts, labels, batch_size, max_length, shuffle):
     return DataLoader(items, batch_size=batch_size, shuffle=shuffle, collate_fn=lambda b: tok.pad(b, return_tensors="pt"))
 
 
-
 @torch.no_grad()
 def dev_pass(model, dev_loader, classes):
     model.eval()
