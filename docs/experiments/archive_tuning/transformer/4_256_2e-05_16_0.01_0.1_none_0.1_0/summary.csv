@@ -1,0 +1,5 @@
+experiment,split,epochs,max_length,lr,batch_size,weight_decay,dropout,seeds,n,accuracy,macro_f1
+binary_generate__unixcoder,dev,4,256,2e-05,16,0.01,0.1,0,529,0.936,0.895
+binary_generate__codebert,dev,4,256,2e-05,16,0.01,0.1,0,529,0.93,0.872
+multiclass_generate__unixcoder,dev,4,256,2e-05,16,0.01,0.1,0,529,0.917,0.771
+multiclass_generate__codebert,dev,4,256,2e-05,16,0.01,0.1,0,529,0.911,0.725

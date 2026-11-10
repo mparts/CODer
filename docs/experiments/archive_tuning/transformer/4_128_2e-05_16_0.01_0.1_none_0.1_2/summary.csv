@@ -1,0 +1,11 @@
+experiment,split,epochs,max_length,lr,batch_size,weight_decay,dropout,seeds,n,accuracy,macro_f1
+binary_generate__unixcoder,dev,4,128,2e-05,16,0.01,0.1,2,529,0.94,0.901
+binary_generate__graphcodebert,dev,4,128,2e-05,16,0.01,0.1,2,529,0.926,0.871
+binary_generate__codebert,dev,4,128,2e-05,16,0.01,0.1,2,529,0.894,0.839
+multiclass_generate__unixcoder,dev,4,128,2e-05,16,0.01,0.1,2,529,0.917,0.78
+binary__unixcoder,dev,4,128,2e-05,16,0.01,0.1,2,681,0.761,0.744
+multiclass_generate__codebert,dev,4,128,2e-05,16,0.01,0.1,2,529,0.917,0.736
+multiclass_generate__graphcodebert,dev,4,128,2e-05,16,0.01,0.1,2,529,0.871,0.722
+binary__codebert,dev,4,128,2e-05,16,0.01,0.1,2,681,0.725,0.714
+multiclass__unixcoder,dev,4,128,2e-05,16,0.01,0.1,2,681,0.715,0.539
+multiclass__codebert,dev,4,128,2e-05,16,0.01,0.1,2,681,0.68,0.499

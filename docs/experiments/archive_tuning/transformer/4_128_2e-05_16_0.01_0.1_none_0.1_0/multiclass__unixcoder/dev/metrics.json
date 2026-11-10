@@ -1,0 +1,73 @@
+{
+  "experiment": "multiclass__unixcoder",
+  "split": "dev",
+  "n": 681,
+  "args": {
+    "model": "unixcoder",
+    "variant": "multiclass",
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "class_weight": "none",
+    "save": false,
+    "eval": false,
+    "test": false
+  },
+  "accuracy": 0.71071953010279,
+  "macro_f1": 0.5523498369587849,
+  "per_class": {
+    "Human": {
+      "precision": 0.7958333333333333,
+      "recall": 0.8761467889908257,
+      "f1": 0.834061135371179,
+      "support": 436
+    },
+    "GEMINI": {
+      "precision": 0.4067796610169492,
+      "recall": 0.2823529411764706,
+      "f1": 0.3333333333333333,
+      "support": 85
+    },
+    "LLAMA": {
+      "precision": 0.5671641791044776,
+      "recall": 0.5588235294117647,
+      "f1": 0.562962962962963,
+      "support": 68
+    },
+    "CODESTRAL": {
+      "precision": 0.5333333333333333,
+      "recall": 0.43478260869565216,
+      "f1": 0.47904191616766467,
+      "support": 92
+    }
+  },
+  "confusion_matrix": [
+    [
+      382,
+      23,
+      13,
+      18
+    ],
+    [
+      45,
+      24,
+      6,
+      10
+    ],
+    [
+      18,
+      5,
+      38,
+      7
+    ],
+    [
+      35,
+      7,
+      10,
+      40
+    ]
+  ]
+}

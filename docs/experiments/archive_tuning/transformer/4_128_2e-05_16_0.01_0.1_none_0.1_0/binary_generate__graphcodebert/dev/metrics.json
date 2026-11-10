@@ -1,0 +1,45 @@
+{
+  "experiment": "binary_generate__graphcodebert",
+  "split": "dev",
+  "n": 529,
+  "args": {
+    "model": "graphcodebert",
+    "variant": "binary_generate",
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "class_weight": "none",
+    "save": false,
+    "eval": false,
+    "test": false
+  },
+  "accuracy": 0.9054820415879017,
+  "macro_f1": 0.8555591961555264,
+  "per_class": {
+    "human": {
+      "precision": 0.9777227722772277,
+      "recall": 0.9059633027522935,
+      "f1": 0.9404761904761905,
+      "support": 436
+    },
+    "ai": {
+      "precision": 0.672,
+      "recall": 0.9032258064516129,
+      "f1": 0.7706422018348624,
+      "support": 93
+    }
+  },
+  "confusion_matrix": [
+    [
+      395,
+      41
+    ],
+    [
+      9,
+      84
+    ]
+  ]
+}

@@ -225,11 +225,19 @@ artifacts/
 # data directory
 data/*
 !data/README.md
+!data/processed/
+data/processed/*
+!data/processed/meta.json
 
 # keeping run.log in repo for reference
 !run/run.log
 
-docs/experiments/
+# final results: archive/ without checkpoints, archive_tuning/ without PNGs
+docs/experiments/*
+!docs/experiments/archive/
+!docs/experiments/archive_tuning/
+docs/experiments/archive/**/checkpoint/
+docs/experiments/archive_tuning/**/*.png
 
 docs/reports/*
 !docs/reports/coder_paper*

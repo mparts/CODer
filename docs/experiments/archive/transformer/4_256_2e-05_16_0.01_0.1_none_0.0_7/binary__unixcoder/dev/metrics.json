@@ -1,0 +1,46 @@
+{
+  "experiment": "binary__unixcoder",
+  "split": "dev",
+  "n": 681,
+  "args": {
+    "model": "unixcoder",
+    "variant": "binary",
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 256,
+    "class_weight": "none",
+    "dropout": 0.0,
+    "eval": false,
+    "test": false,
+    "save_ckpt": true
+  },
+  "accuracy": 0.7856093979441997,
+  "macro_f1": 0.754915204101755,
+  "per_class": {
+    "human": {
+      "precision": 0.7983539094650206,
+      "recall": 0.8899082568807339,
+      "f1": 0.841648590021692,
+      "support": 436
+    },
+    "ai": {
+      "precision": 0.7538461538461538,
+      "recall": 0.6,
+      "f1": 0.6681818181818182,
+      "support": 245
+    }
+  },
+  "confusion_matrix": [
+    [
+      388,
+      48
+    ],
+    [
+      98,
+      147
+    ]
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "experiment": "binary_generate__char_LogReg",
+  "split": "test",
+  "n": 1091,
+  "args": {
+    "model": "char_LogReg",
+    "variant": "binary_generate",
+    "eval": false,
+    "test": true,
+    "save_ckpt": false
+  },
+  "accuracy": 0.9569202566452796,
+  "macro_f1": 0.9230196440501122,
+  "per_class": {
+    "human": {
+      "precision": 0.9714285714285714,
+      "recall": 0.9767955801104973,
+      "f1": 0.9741046831955923,
+      "support": 905
+    },
+    "ai": {
+      "precision": 0.8839779005524862,
+      "recall": 0.8602150537634409,
+      "f1": 0.8719346049046321,
+      "support": 186
+    }
+  },
+  "confusion_matrix": [
+    [
+      884,
+      21
+    ],
+    [
+      26,
+      160
+    ]
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "experiment": "multiclass_generate__char_LogReg",
+  "split": "dev",
+  "n": 529,
+  "args": {
+    "model": "char_LogReg",
+    "variant": "multiclass_generate",
+    "eval": false,
+    "test": false,
+    "save_ckpt": true
+  },
+  "accuracy": 0.9300567107750473,
+  "macro_f1": 0.7943619168183181,
+  "per_class": {
+    "Human": {
+      "precision": 0.9553571428571429,
+      "recall": 0.981651376146789,
+      "f1": 0.9683257918552036,
+      "support": 436
+    },
+    "GEMINI": {
+      "precision": 0.6,
+      "recall": 0.5806451612903226,
+      "f1": 0.5901639344262295,
+      "support": 31
+    },
+    "LLAMA": {
+      "precision": 0.9642857142857143,
+      "recall": 0.8709677419354839,
+      "f1": 0.9152542372881356,
+      "support": 31
+    },
+    "CODESTRAL": {
+      "precision": 0.8260869565217391,
+      "recall": 0.6129032258064516,
+      "f1": 0.7037037037037037,
+      "support": 31
+    }
+  },
+  "confusion_matrix": [
+    [
+      428,
+      7,
+      1,
+      0
+    ],
+    [
+      10,
+      18,
+      0,
+      3
+    ],
+    [
+      3,
+      0,
+      27,
+      1
+    ],
+    [
+      7,
+      5,
+      0,
+      19
+    ]
+  ]
+}

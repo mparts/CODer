@@ -1,0 +1,98 @@
+{
+  "binary": {
+    "classes": [
+      "human",
+      "ai"
+    ],
+    "counts": {
+      "train": [
+        3323,
+        1944
+      ],
+      "dev": [
+        465,
+        274
+      ],
+      "test": [
+        958,
+        567
+      ]
+    }
+  },
+  "binary_generate": {
+    "classes": [
+      "human",
+      "ai"
+    ],
+    "counts": {
+      "train": [
+        3323,
+        652
+      ],
+      "dev": [
+        465,
+        93
+      ],
+      "test": [
+        958,
+        186
+      ]
+    }
+  },
+  "multiclass": {
+    "classes": [
+      "Human",
+      "GEMINI",
+      "LLAMA",
+      "CODESTRAL"
+    ],
+    "counts": {
+      "train": [
+        3323,
+        650,
+        650,
+        644
+      ],
+      "dev": [
+        465,
+        90,
+        92,
+        92
+      ],
+      "test": [
+        958,
+        189,
+        188,
+        190
+      ]
+    }
+  },
+  "multiclass_generate": {
+    "classes": [
+      "Human",
+      "GEMINI",
+      "LLAMA",
+      "CODESTRAL"
+    ],
+    "counts": {
+      "train": [
+        3323,
+        218,
+        218,
+        216
+      ],
+      "dev": [
+        465,
+        31,
+        31,
+        31
+      ],
+      "test": [
+        958,
+        62,
+        61,
+        63
+      ]
+    }
+  }
+}

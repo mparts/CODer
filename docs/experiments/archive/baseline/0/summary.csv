@@ -1,0 +1,17 @@
+experiment,split,seeds,n,accuracy,macro_f1
+binary_generate__char_LogReg,test,0,1091,0.957,0.923
+binary_generate__char_LogReg,dev,0,529,0.951,0.911
+binary_generate__word_LogReg,test,0,1091,0.94,0.885
+binary_generate__word_LogReg,dev,0,529,0.921,0.856
+multiclass_generate__char_LogReg,test,0,1091,0.938,0.808
+multiclass_generate__char_LogReg,dev,0,529,0.93,0.794
+multiclass_generate__word_LogReg,test,0,1091,0.926,0.772
+binary__char_LogReg,test,0,1419,0.781,0.743
+binary__char_LogReg,dev,0,681,0.781,0.739
+multiclass_generate__word_LogReg,dev,0,529,0.896,0.688
+binary__word_LogReg,dev,0,681,0.727,0.672
+binary__word_LogReg,test,0,1419,0.72,0.658
+multiclass__char_LogReg,dev,0,681,0.731,0.568
+multiclass__char_LogReg,test,0,1419,0.731,0.554
+multiclass__word_LogReg,test,0,1419,0.679,0.477
+multiclass__word_LogReg,dev,0,681,0.662,0.455

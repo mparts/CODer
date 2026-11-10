@@ -1,0 +1,73 @@
+{
+  "experiment": "multiclass_generate__unixcoder",
+  "split": "dev",
+  "n": 529,
+  "args": {
+    "model": "unixcoder",
+    "variant": "multiclass_generate",
+    "epochs": 6,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 256,
+    "class_weight": "none",
+    "dropout": 0.0,
+    "eval": false,
+    "test": false
+  },
+  "accuracy": 0.9395085066162571,
+  "macro_f1": 0.831211938468839,
+  "per_class": {
+    "Human": {
+      "precision": 0.9724770642201835,
+      "recall": 0.9724770642201835,
+      "f1": 0.9724770642201835,
+      "support": 436
+    },
+    "GEMINI": {
+      "precision": 0.6363636363636364,
+      "recall": 0.6774193548387096,
+      "f1": 0.65625,
+      "support": 31
+    },
+    "LLAMA": {
+      "precision": 0.9090909090909091,
+      "recall": 0.967741935483871,
+      "f1": 0.9375,
+      "support": 31
+    },
+    "CODESTRAL": {
+      "precision": 0.8148148148148148,
+      "recall": 0.7096774193548387,
+      "f1": 0.7586206896551724,
+      "support": 31
+    }
+  },
+  "confusion_matrix": [
+    [
+      424,
+      9,
+      1,
+      2
+    ],
+    [
+      5,
+      21,
+      2,
+      3
+    ],
+    [
+      1,
+      0,
+      30,
+      0
+    ],
+    [
+      6,
+      3,
+      0,
+      22
+    ]
+  ]
+}

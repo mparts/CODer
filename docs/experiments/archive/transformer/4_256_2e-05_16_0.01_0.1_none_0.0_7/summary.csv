@@ -1,0 +1,9 @@
+experiment,split,seeds,n,accuracy,macro_f1
+binary_generate__unixcoder,test,7,1091,0.968,0.942
+binary_generate__unixcoder,dev,7,529,0.957,0.925
+multiclass_generate__unixcoder,test,7,1091,0.948,0.829
+multiclass_generate__unixcoder,dev,7,529,0.94,0.819
+binary__unixcoder,test,7,1419,0.803,0.776
+binary__unixcoder,dev,7,681,0.786,0.755
+multiclass__unixcoder,dev,7,681,0.736,0.576
+multiclass__unixcoder,test,7,1419,0.743,0.57

@@ -1,0 +1,74 @@
+{
+  "experiment": "multiclass_generate__unixcoder",
+  "split": "test",
+  "n": 1091,
+  "args": {
+    "model": "unixcoder",
+    "variant": "multiclass_generate",
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 256,
+    "class_weight": "none",
+    "dropout": 0.0,
+    "eval": false,
+    "test": true,
+    "save_ckpt": false
+  },
+  "accuracy": 0.9468377635197067,
+  "macro_f1": 0.8246940966193915,
+  "per_class": {
+    "Human": {
+      "precision": 0.9696641386782232,
+      "recall": 0.988950276243094,
+      "f1": 0.9792122538293216,
+      "support": 905
+    },
+    "GEMINI": {
+      "precision": 0.7333333333333333,
+      "recall": 0.532258064516129,
+      "f1": 0.616822429906542,
+      "support": 62
+    },
+    "LLAMA": {
+      "precision": 0.9166666666666666,
+      "recall": 0.9016393442622951,
+      "f1": 0.9090909090909091,
+      "support": 61
+    },
+    "CODESTRAL": {
+      "precision": 0.7936507936507936,
+      "recall": 0.7936507936507936,
+      "f1": 0.7936507936507936,
+      "support": 63
+    }
+  },
+  "confusion_matrix": [
+    [
+      895,
+      5,
+      1,
+      4
+    ],
+    [
+      24,
+      33,
+      0,
+      5
+    ],
+    [
+      1,
+      1,
+      55,
+      4
+    ],
+    [
+      3,
+      6,
+      4,
+      50
+    ]
+  ]
+}

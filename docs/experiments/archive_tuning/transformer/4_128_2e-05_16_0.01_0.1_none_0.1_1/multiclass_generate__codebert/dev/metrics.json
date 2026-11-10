@@ -1,0 +1,73 @@
+{
+  "experiment": "multiclass_generate__codebert",
+  "split": "dev",
+  "n": 529,
+  "args": {
+    "model": "codebert",
+    "variant": "multiclass_generate",
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "class_weight": "none",
+    "save": false,
+    "eval": false,
+    "test": false
+  },
+  "accuracy": 0.8676748582230623,
+  "macro_f1": 0.7179828927752436,
+  "per_class": {
+    "Human": {
+      "precision": 0.9774436090225563,
+      "recall": 0.8944954128440367,
+      "f1": 0.9341317365269461,
+      "support": 436
+    },
+    "GEMINI": {
+      "precision": 0.3225806451612903,
+      "recall": 0.6451612903225806,
+      "f1": 0.43010752688172044,
+      "support": 31
+    },
+    "LLAMA": {
+      "precision": 0.8529411764705882,
+      "recall": 0.9354838709677419,
+      "f1": 0.8923076923076924,
+      "support": 31
+    },
+    "CODESTRAL": {
+      "precision": 0.5882352941176471,
+      "recall": 0.6451612903225806,
+      "f1": 0.6153846153846154,
+      "support": 31
+    }
+  },
+  "confusion_matrix": [
+    [
+      390,
+      37,
+      1,
+      8
+    ],
+    [
+      3,
+      20,
+      3,
+      5
+    ],
+    [
+      1,
+      0,
+      29,
+      1
+    ],
+    [
+      5,
+      5,
+      1,
+      20
+    ]
+  ]
+}

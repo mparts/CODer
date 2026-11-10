@@ -1,0 +1,73 @@
+{
+  "experiment": "multiclass_generate__graphcodebert",
+  "split": "dev",
+  "n": 529,
+  "args": {
+    "model": "graphcodebert",
+    "variant": "multiclass_generate",
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "class_weight": "none",
+    "save": false,
+    "eval": false,
+    "test": false
+  },
+  "accuracy": 0.8714555765595463,
+  "macro_f1": 0.7220276256607152,
+  "per_class": {
+    "Human": {
+      "precision": 0.9775561097256857,
+      "recall": 0.8990825688073395,
+      "f1": 0.9366786140979689,
+      "support": 436
+    },
+    "GEMINI": {
+      "precision": 0.3230769230769231,
+      "recall": 0.6774193548387096,
+      "f1": 0.4375,
+      "support": 31
+    },
+    "LLAMA": {
+      "precision": 0.8108108108108109,
+      "recall": 0.967741935483871,
+      "f1": 0.8823529411764706,
+      "support": 31
+    },
+    "CODESTRAL": {
+      "precision": 0.6923076923076923,
+      "recall": 0.5806451612903226,
+      "f1": 0.631578947368421,
+      "support": 31
+    }
+  },
+  "confusion_matrix": [
+    [
+      392,
+      39,
+      1,
+      4
+    ],
+    [
+      3,
+      21,
+      3,
+      4
+    ],
+    [
+      1,
+      0,
+      30,
+      0
+    ],
+    [
+      5,
+      5,
+      3,
+      18
+    ]
+  ]
+}

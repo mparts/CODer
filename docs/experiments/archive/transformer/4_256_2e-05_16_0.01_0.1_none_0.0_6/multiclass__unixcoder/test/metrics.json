@@ -1,0 +1,74 @@
+{
+  "experiment": "multiclass__unixcoder",
+  "split": "test",
+  "n": 1419,
+  "args": {
+    "model": "unixcoder",
+    "variant": "multiclass",
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 256,
+    "class_weight": "none",
+    "dropout": 0.0,
+    "eval": false,
+    "test": true,
+    "save_ckpt": false
+  },
+  "accuracy": 0.7399577167019028,
+  "macro_f1": 0.5337720168836211,
+  "per_class": {
+    "Human": {
+      "precision": 0.7670753064798599,
+      "recall": 0.9679558011049724,
+      "f1": 0.8558866634098681,
+      "support": 905
+    },
+    "GEMINI": {
+      "precision": 0.8055555555555556,
+      "recall": 0.16201117318435754,
+      "f1": 0.26976744186046514,
+      "support": 179
+    },
+    "LLAMA": {
+      "precision": 0.8181818181818182,
+      "recall": 0.3698630136986301,
+      "f1": 0.5094339622641509,
+      "support": 146
+    },
+    "CODESTRAL": {
+      "precision": 0.52,
+      "recall": 0.48148148148148145,
+      "f1": 0.5,
+      "support": 189
+    }
+  },
+  "confusion_matrix": [
+    [
+      876,
+      4,
+      4,
+      21
+    ],
+    [
+      116,
+      29,
+      3,
+      31
+    ],
+    [
+      58,
+      2,
+      54,
+      32
+    ],
+    [
+      92,
+      1,
+      5,
+      91
+    ]
+  ]
+}

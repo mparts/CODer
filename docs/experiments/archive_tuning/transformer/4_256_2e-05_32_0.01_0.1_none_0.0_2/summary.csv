@@ -1,0 +1,3 @@
+experiment,split,epochs,max_length,lr,batch_size,weight_decay,dropout,seeds,n,accuracy,macro_f1
+binary_generate__unixcoder,dev,4,256,2e-05,32,0.01,0.0,2,529,0.951,0.914
+multiclass_generate__unixcoder,dev,4,256,2e-05,32,0.01,0.0,2,529,0.936,0.816

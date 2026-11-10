@@ -1,0 +1,9 @@
+experiment,split,seeds,n,accuracy,macro_f1
+binary_generate__char_LogReg,dev,0,529,0.951,0.911
+binary_generate__word_LogReg,dev,0,529,0.921,0.856
+multiclass_generate__char_LogReg,dev,0,529,0.93,0.794
+binary__char_LogReg,dev,0,681,0.781,0.739
+multiclass_generate__word_LogReg,dev,0,529,0.896,0.688
+binary__word_LogReg,dev,0,681,0.727,0.672
+multiclass__char_LogReg,dev,0,681,0.731,0.568
+multiclass__word_LogReg,dev,0,681,0.662,0.455

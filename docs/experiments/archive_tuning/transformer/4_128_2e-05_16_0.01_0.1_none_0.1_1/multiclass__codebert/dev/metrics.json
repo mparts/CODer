@@ -1,0 +1,73 @@
+{
+  "experiment": "multiclass__codebert",
+  "split": "dev",
+  "n": 681,
+  "args": {
+    "model": "codebert",
+    "variant": "multiclass",
+    "epochs": 4,
+    "batch_size": 16,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_length": 128,
+    "class_weight": "none",
+    "save": false,
+    "eval": false,
+    "test": false
+  },
+  "accuracy": 0.6563876651982379,
+  "macro_f1": 0.5177978379980612,
+  "per_class": {
+    "Human": {
+      "precision": 0.8073394495412844,
+      "recall": 0.8073394495412844,
+      "f1": 0.8073394495412844,
+      "support": 436
+    },
+    "GEMINI": {
+      "precision": 0.2196969696969697,
+      "recall": 0.3411764705882353,
+      "f1": 0.2672811059907834,
+      "support": 85
+    },
+    "LLAMA": {
+      "precision": 0.7333333333333333,
+      "recall": 0.4852941176470588,
+      "f1": 0.584070796460177,
+      "support": 68
+    },
+    "CODESTRAL": {
+      "precision": 0.4852941176470588,
+      "recall": 0.358695652173913,
+      "f1": 0.4125,
+      "support": 92
+    }
+  },
+  "confusion_matrix": [
+    [
+      352,
+      59,
+      3,
+      22
+    ],
+    [
+      39,
+      29,
+      7,
+      10
+    ],
+    [
+      17,
+      15,
+      33,
+      3
+    ],
+    [
+      28,
+      29,
+      2,
+      33
+    ]
+  ]
+}
