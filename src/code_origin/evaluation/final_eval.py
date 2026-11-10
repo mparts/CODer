@@ -10,13 +10,15 @@ v = sys.argv[1]
 arch = EXPERIMENTS_DIR / "archive"
 ux = sorted((arch / "transformer").glob(f"*/{v}__unixcoder/test"))
 lr = sorted((arch / "baseline").glob(f"*/{v}__char_LogReg/test"))[0]
+wd = sorted((arch / "baseline").glob(f"*/{v}__word_LogReg/test"))[0]
 
 ref = pd.read_parquet(lr / "predictions.parquet")
-for d in ux:                                   # same files, same order everywhere
+for d in ux + [wd]:                            # same files, same order everywhere
     assert (pd.read_parquet(d / "predictions.parquet").uid.values == ref.uid.values).all()
 y, groups = ref.y.values, ref.problem_id.values
 P = np.stack([np.load(d / "proba.npy") for d in ux])   # seeds x files x classes
 pc = np.load(lr / "proba.npy")
+pw = np.load(wd / "proba.npy")
 pe = P.mean(0)                                          # seed ensemble
 labels = np.arange(P.shape[2])
 f1 = lambda yy, p: f1_score(yy, p.argmax(1), average="macro", labels=labels, zero_division=0)
@@ -26,6 +28,7 @@ log(f"{v}: {len(ux)} seeds", "start")
 print(f"UniXcoder single seed   {np.mean(single):.3f} ± {np.std(single, ddof=1):.3f}")
 print(f"UniXcoder seed ensemble {f1(y, pe):.3f}")
 print(f"char LogReg             {f1(y, pc):.3f}")
+print(f"word LogReg             {f1(y, pw):.3f}")
 print(f"mix 50/50 (ens + char)  {f1(y, .5 * pe + .5 * pc):.3f}")
 
 # paired cluster bootstrap over problems (files of one problem stay together)

@@ -79,6 +79,20 @@ else
     done
 fi
 
+
+if ! $PAPER_TABLES; then
+    echo "$LINE" | tee -a "$LOG_FILE"
+    section "<!> Part 4. Paper tables skipped. <!>"
+else
+    echo "$LINE" | tee -a "$LOG_FILE"
+    section "Part 4. Paper tables (Tables 2 and 5) from the shipped test predictions"
+    echo "$LINE" | tee -a "$LOG_FILE"
+    for v in $DATASETS; do
+        run_step true evaluation.final_eval "$v"
+        run_step true evaluation.breakdown "$v"
+    done
+fi
+
 echo "$LINE" | tee -a "$LOG_FILE"
 echo "^^^                                       ^^^" | tee -a "$LOG_FILE"
 echo "^^^    End of RUN.sh pipeline.            ^^^" | tee -a "$LOG_FILE"
