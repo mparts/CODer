@@ -8,6 +8,7 @@ dev run : fine-tunes on train for a fixed number of epochs (no checkpoint pickin
 test run: loads the saved model (no training) and writes .../test/. Do this once, at the very end.
 """
 import argparse, json, numpy as np, torch, pandas as pd, shutil
+from pathlib import Path
 
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers.utils import logging
@@ -72,8 +73,10 @@ if __name__ == "__main__":
     ap.add_argument("--eval",      action="store_true", help="Evaluate the saved model on dev")
     ap.add_argument("--test",      action="store_true", help="Evaluate the saved model on test instead of dev")
     ap.add_argument("--save_ckpt", action="store_true", help="also copy the trained model into the run folder")
+    ap.add_argument("--model_dir", help="With --eval/--test: load the saved model from here instead of artifacts/")
     a = ap.parse_args()
     exp, split, model_dir, out, df, classes = cache_data(a, MODES[1])
+    model_dir = Path(a.model_dir) if a.model_dir else model_dir
 
     trained_model, tokenizer, history = train()
     results, predictions = eval(trained_model, tokenizer)
