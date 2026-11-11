@@ -4,7 +4,7 @@ Final project for the course Machine Learning for Statistical NLP: Advanced (LT2
 
 Can code written by an LLM be told apart from human code, and can we tell which LLM wrote it? CODer studies this on [AIGCodeSet](https://huggingface.co/datasets/basakdemirok/AIGCodeSet), Python solutions to CodeNet problems written by humans or by Gemini, CodeLlama and Codestral. It compares word and character n-gram logistic regression with fine-tuned code encoders (CodeBERT, GraphCodeBERT, UniXcoder) on four task variants, using splits grouped by problem and a test set used only once.
 
-The paper: [coder_paper.pdf](docs/reports/coder_paper.pdf) ([markdown version](docs/reports/coder_paper.md)).
+The paper: [coder_paper.pdf](docs/reports/coder_paper.pdf) ([LaTeX source](docs/reports/coder_paper_latex/)).
 
 ## Results
 

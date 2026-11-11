@@ -1,0 +1,11 @@
+# LaTeX build output (latexmk, LaTeX Workshop). The paper's PDF is docs/reports/coder_paper.pdf.
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.pdf
+build/

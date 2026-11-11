@@ -7,8 +7,8 @@ The paper, the project proposal and slides, and the archived runs behind Tables 
 ```
 docs/
 ├── reports/
-│   ├── coder_paper.md          the paper
-│   ├── coder_paper.pdf         the paper, rendered
+│   ├── coder_paper.pdf         the paper
+│   ├── coder_paper_latex/      its LaTeX source (ACL template), references and figures
 │   └── AI_log.md               how AI assistance was used
 ├── notebooks/
 │   ├── Project_Proposal_Bartsiokas.md   project proposal
