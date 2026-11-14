@@ -229,8 +229,8 @@ data/*
 data/processed/*
 !data/processed/meta.json
 
-# keeping run.log in repo for reference
-!run/run.log
+# sweep logs of the tuning and final runs (run/run.log stays local)
+!logs/*.log
 
 # final results: archive/ without checkpoints, archive_tuning/ without PNGs
 docs/experiments/*

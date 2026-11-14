@@ -1,0 +1,210 @@
+
+##### seed 3 | multiclass | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 22:29:56.240653] Training multiclass__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.9322 | dev loss 0.8341 | dev macro-F1 0.4402
+! Epoch 2/4 | train loss 0.7582 | dev loss 0.7733 | dev macro-F1 0.5403
+! Epoch 3/4 | train loss 0.6450 | dev loss 0.7660 | dev macro-F1 0.5451
+! Epoch 4/4 | train loss 0.5212 | dev loss 0.8033 | dev macro-F1 0.5410
+Best checkpoint: epoch 3, dev macro-F1 0.5451
+acc 0.730  macro-F1 0.546
+  Human      Precision 0.776  Recall 0.929  F1 0.846  n=436
+  GEMINI     Precision 0.500  Recall 0.165  F1 0.248  n=85
+  LLAMA      Precision 0.723  Recall 0.500  F1 0.591  n=68
+  CODESTRAL  Precision 0.524  Recall 0.478  F1 0.500  n=92
+
+
+   [2026-10-25 22:44:10.903619] Success!!
+====================================================================================================
+
+##### seed 3 | multiclass | TEST
+====================================================================================================
+   [2026-10-25 22:44:15.922609] Evaluating multiclass__unixcoder on the test split..
+
+
+acc 0.739  macro-F1 0.554
+  Human      Precision 0.787  Recall 0.940  F1 0.857  n=905
+  GEMINI     Precision 0.755  Recall 0.207  F1 0.325  n=179
+  LLAMA      Precision 0.619  Recall 0.445  F1 0.518  n=146
+  CODESTRAL  Precision 0.525  Recall 0.508  F1 0.516  n=189
+
+
+   [2026-10-25 22:44:38.867656] Success!!
+====================================================================================================
+
+##### seed 4 | multiclass | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 22:44:43.902632] Training multiclass__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.9698 | dev loss 0.8737 | dev macro-F1 0.4131
+! Epoch 2/4 | train loss 0.7562 | dev loss 0.7639 | dev macro-F1 0.5458
+! Epoch 3/4 | train loss 0.6200 | dev loss 0.7668 | dev macro-F1 0.5735
+! Epoch 4/4 | train loss 0.4692 | dev loss 0.7917 | dev macro-F1 0.5790
+Best checkpoint: epoch 4, dev macro-F1 0.5790
+acc 0.739  macro-F1 0.580
+  Human      Precision 0.794  Recall 0.917  F1 0.851  n=436
+  GEMINI     Precision 0.456  Recall 0.306  F1 0.366  n=85
+  LLAMA      Precision 0.647  Recall 0.485  F1 0.555  n=68
+  CODESTRAL  Precision 0.638  Recall 0.478  F1 0.547  n=92
+
+
+   [2026-10-25 22:58:58.921406] Success!!
+====================================================================================================
+
+##### seed 4 | multiclass | TEST
+====================================================================================================
+   [2026-10-25 22:59:03.980002] Evaluating multiclass__unixcoder on the test split..
+
+
+acc 0.751  macro-F1 0.588
+  Human      Precision 0.794  Recall 0.934  F1 0.858  n=905
+  GEMINI     Precision 0.614  Recall 0.240  F1 0.345  n=179
+  LLAMA      Precision 0.574  Recall 0.555  F1 0.564  n=146
+  CODESTRAL  Precision 0.674  Recall 0.513  F1 0.583  n=189
+
+
+   [2026-10-25 22:59:26.955966] Success!!
+====================================================================================================
+
+##### seed 5 | multiclass | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 22:59:31.939428] Training multiclass__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.9213 | dev loss 0.8403 | dev macro-F1 0.4673
+! Epoch 2/4 | train loss 0.7425 | dev loss 0.7802 | dev macro-F1 0.5475
+! Epoch 3/4 | train loss 0.6098 | dev loss 0.7792 | dev macro-F1 0.5583
+! Epoch 4/4 | train loss 0.4767 | dev loss 0.8310 | dev macro-F1 0.5677
+Best checkpoint: epoch 4, dev macro-F1 0.5677
+acc 0.733  macro-F1 0.567
+  Human      Precision 0.789  Recall 0.917  F1 0.848  n=436
+  GEMINI     Precision 0.480  Recall 0.282  F1 0.356  n=85
+  LLAMA      Precision 0.621  Recall 0.529  F1 0.571  n=68
+  CODESTRAL  Precision 0.591  Recall 0.424  F1 0.494  n=92
+
+
+   [2026-10-25 23:13:48.092448] Success!!
+====================================================================================================
+
+##### seed 5 | multiclass | TEST
+====================================================================================================
+   [2026-10-25 23:13:53.343584] Evaluating multiclass__unixcoder on the test split..
+
+
+acc 0.737  macro-F1 0.574
+  Human      Precision 0.787  Recall 0.919  F1 0.848  n=905
+  GEMINI     Precision 0.653  Recall 0.263  F1 0.375  n=179
+  LLAMA      Precision 0.568  Recall 0.541  F1 0.554  n=146
+  CODESTRAL  Precision 0.583  Recall 0.466  F1 0.518  n=189
+
+
+   [2026-10-25 23:14:16.334265] Success!!
+====================================================================================================
+
+##### seed 6 | multiclass | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 23:14:21.403049] Training multiclass__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.9344 | dev loss 0.8185 | dev macro-F1 0.5283
+! Epoch 2/4 | train loss 0.7513 | dev loss 0.7666 | dev macro-F1 0.5496
+! Epoch 3/4 | train loss 0.6307 | dev loss 0.7743 | dev macro-F1 0.5473
+! Epoch 4/4 | train loss 0.5025 | dev loss 0.7937 | dev macro-F1 0.5464
+Best checkpoint: epoch 2, dev macro-F1 0.5496
+acc 0.737  macro-F1 0.548
+  Human      Precision 0.761  Recall 0.952  F1 0.846  n=436
+  GEMINI     Precision 0.560  Recall 0.165  F1 0.255  n=85
+  LLAMA      Precision 0.833  Recall 0.441  F1 0.577  n=68
+  CODESTRAL  Precision 0.573  Recall 0.467  F1 0.515  n=92
+
+
+   [2026-10-25 23:28:37.590466] Success!!
+====================================================================================================
+
+##### seed 6 | multiclass | TEST
+====================================================================================================
+   [2026-10-25 23:28:42.659839] Evaluating multiclass__unixcoder on the test split..
+
+
+acc 0.740  macro-F1 0.534
+  Human      Precision 0.767  Recall 0.968  F1 0.856  n=905
+  GEMINI     Precision 0.806  Recall 0.162  F1 0.270  n=179
+  LLAMA      Precision 0.818  Recall 0.370  F1 0.509  n=146
+  CODESTRAL  Precision 0.520  Recall 0.481  F1 0.500  n=189
+
+
+   [2026-10-25 23:29:05.800698] Success!!
+====================================================================================================
+
+##### seed 7 | multiclass | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 23:29:10.952969] Training multiclass__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.9441 | dev loss 0.8161 | dev macro-F1 0.4694
+! Epoch 2/4 | train loss 0.7589 | dev loss 0.7676 | dev macro-F1 0.5300
+! Epoch 3/4 | train loss 0.6489 | dev loss 0.7946 | dev macro-F1 0.5309
+! Epoch 4/4 | train loss 0.5349 | dev loss 0.8137 | dev macro-F1 0.5775
+Best checkpoint: epoch 4, dev macro-F1 0.5775
+acc 0.736  macro-F1 0.576
+  Human      Precision 0.781  Recall 0.922  F1 0.845  n=436
+  GEMINI     Precision 0.455  Recall 0.294  F1 0.357  n=85
+  LLAMA      Precision 0.686  Recall 0.515  F1 0.588  n=68
+  CODESTRAL  Precision 0.650  Recall 0.424  F1 0.513  n=92
+
+
+   [2026-10-25 23:43:24.274944] Success!!
+====================================================================================================
+
+##### seed 7 | multiclass | TEST
+====================================================================================================
+   [2026-10-25 23:43:29.489516] Evaluating multiclass__unixcoder on the test split..
+
+
+acc 0.743  macro-F1 0.570
+  Human      Precision 0.784  Recall 0.941  F1 0.855  n=905
+  GEMINI     Precision 0.579  Recall 0.246  F1 0.345  n=179
+  LLAMA      Precision 0.636  Recall 0.479  F1 0.547  n=146
+  CODESTRAL  Precision 0.610  Recall 0.471  F1 0.531  n=189
+
+
+   [2026-10-25 23:43:52.560793] Success!!
+====================================================================================================
+
+##### seed 8 | multiclass | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 23:43:57.576280] Training multiclass__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.9393 | dev loss 0.8631 | dev macro-F1 0.3915
+! Epoch 2/4 | train loss 0.7442 | dev loss 0.7770 | dev macro-F1 0.5386
+! Epoch 3/4 | train loss 0.6039 | dev loss 0.7775 | dev macro-F1 0.5769
+! Epoch 4/4 | train loss 0.4460 | dev loss 0.7881 | dev macro-F1 0.5796
+Best checkpoint: epoch 4, dev macro-F1 0.5796
+acc 0.742  macro-F1 0.583
+  Human      Precision 0.796  Recall 0.920  F1 0.853  n=436
+  GEMINI     Precision 0.407  Recall 0.259  F1 0.317  n=85
+  LLAMA      Precision 0.623  Recall 0.559  F1 0.589  n=68
+  CODESTRAL  Precision 0.710  Recall 0.478  F1 0.571  n=92
+
+
+   [2026-10-25 23:58:12.904900] Success!!
+====================================================================================================
+
+##### seed 8 | multiclass | TEST
+====================================================================================================
+   [2026-10-25 23:58:18.133793] Evaluating multiclass__unixcoder on the test split..
+
+
+acc 0.758  macro-F1 0.607
+  Human      Precision 0.805  Recall 0.928  F1 0.862  n=905
+  GEMINI     Precision 0.607  Recall 0.285  F1 0.388  n=179
+  LLAMA      Precision 0.606  Recall 0.548  F1 0.576  n=146
+  CODESTRAL  Precision 0.656  Recall 0.556  F1 0.602  n=189
+
+
+   [2026-10-25 23:58:41.194710] Success!!
+====================================================================================================

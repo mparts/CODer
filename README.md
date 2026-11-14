@@ -59,7 +59,7 @@ A GPU is only needed to train or re-predict. The versions below are the server's
 | `bash run/RUN.sh hub.conf` | Fetches the processed data and the 24 UniXcoder checkpoints from the Hugging Face Hub, predicts test again, then rebuilds the tables. The LogReg numbers come from the shipped predictions | About 12 GB of download, a GPU                                                                                |
 | `bash run/RUN.sh og.conf`  | The whole experiment from scratch: download, preprocessing, data checks, both LogRegs, UniXcoder over 6 seeds and 4 variants, then the tables                                              | Hours on the GPU. The numbers come out close to the paper, not identical, since GPU training is not bit-exact |
 
-- Stages and settings live in [run/run.conf](run/run.conf). A preset is read after it and overrides it. The output is logged to `run/run.log`.
+- Stages and settings live in [run/run.conf](run/run.conf). A preset is read after it and overrides it. The output is logged to `run/run.log`, which stays local and is not in git.
 - The `hub.conf` and `og.conf` runs overwrite the shipped results in `docs/experiments/archive/`. `git checkout -- docs/experiments/archive` restores them.
 - Each step can also be run on its own, for example `PYTHONPATH=src python3 -m code_origin.evaluation.final_eval binary`. The modules are listed in [src/code_origin/README.md](src/code_origin/README.md).
 - The tuning runs behind Table 3 are shipped in `docs/experiments/archive_tuning/`, but `RUN.sh` does not rerun them. Table 4 (cross-validation and ablation of the char baseline) cannot be rerun, as its code was not kept.
@@ -71,6 +71,7 @@ A GPU is only needed to train or re-predict. The versions below are the server's
 ├── run/                RUN.sh and its settings: run.conf, og.conf, hub.conf
 ├── src/code_origin/    the Python package: data, models, training, evaluation
 ├── data/               the dataset, built or fetched by RUN.sh (only processed/meta.json is in git)
+├── logs/               training logs of the tuning and final runs, written by sweep.py
 └── docs/
     ├── reports/        the paper and the AI-use log
     ├── notebooks/      project proposal and presentation slides

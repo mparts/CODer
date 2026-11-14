@@ -1,0 +1,49 @@
+
+##### seed 0 | binary_generate | --epochs 6 --lr 2e-05 --max_length 10 --batch_size 16 --class_weight none --dropout 0.0
+====================================================================================================
+   [2026-10-25 14:09:57.461138] Training binary_generate__unixcoder...
+
+
+! Epoch 1/6 | train loss 0.3561 | dev loss 0.3246 | dev macro-F1 0.7750
+! Epoch 2/6 | train loss 0.2303 | dev loss 0.3456 | dev macro-F1 0.7782
+! Epoch 3/6 | train loss 0.1974 | dev loss 0.2871 | dev macro-F1 0.7962
+! Epoch 4/6 | train loss 0.1681 | dev loss 0.3231 | dev macro-F1 0.8002
+! Epoch 5/6 | train loss 0.1508 | dev loss 0.3335 | dev macro-F1 0.7876
+! Epoch 6/6 | train loss 0.1378 | dev loss 0.3582 | dev macro-F1 0.7876
+Best checkpoint: epoch 4, dev macro-F1 0.8002
+acc 0.902  macro-F1 0.800
+  human      Precision 0.909  Recall 0.979  F1 0.943  n=436
+  ai         Precision 0.847  Recall 0.538  F1 0.658  n=93
+
+
+   [2026-10-25 14:12:17.770261] Success!!
+====================================================================================================
+
+##### seed 0 | multiclass_generate | --epochs 6 --lr 2e-05 --max_length 10 --batch_size 16 --class_weight none --dropout 0.0
+====================================================================================================
+   [2026-10-25 14:12:23.121201] Training multiclass_generate__unixcoder...
+
+
+! Epoch 1/6 | train loss 0.5549 | dev loss 0.4421 | dev macro-F1 0.5430
+! Epoch 2/6 | train loss 0.3396 | dev loss 0.3696 | dev macro-F1 0.5556
+! Epoch 3/6 | train loss 0.2782 | dev loss 0.3833 | dev macro-F1 0.5996
+! Epoch 4/6 | train loss 0.2337 | dev loss 0.4087 | dev macro-F1 0.6164
+! Epoch 5/6 | train loss 0.2064 | dev loss 0.4258 | dev macro-F1 0.6136
+! Epoch 6/6 | train loss 0.1895 | dev loss 0.4400 | dev macro-F1 0.6247
+Best checkpoint: epoch 6, dev macro-F1 0.6247
+acc 0.894  macro-F1 0.625
+  Human      Precision 0.905  Recall 0.989  F1 0.945  n=436
+  GEMINI     Precision 0.429  Recall 0.097  F1 0.158  n=31
+  LLAMA      Precision 0.900  Recall 0.871  F1 0.885  n=31
+  CODESTRAL  Precision 0.750  Recall 0.387  F1 0.511  n=31
+
+
+   [2026-10-25 14:14:43.654197] Success!!
+====================================================================================================
+
+##### seed 1 | binary_generate | --epochs 6 --lr 2e-05 --max_length 10 --batch_size 16 --class_weight none --dropout 0.0
+====================================================================================================
+   [2026-10-25 14:14:49.125587] Training binary_generate__unixcoder...
+
+
+Epoch 1/6:   0%|[32m                                                         [0m| 0/239 [00:00<?, ?batch/s][0mEpoch 1/6:   0%|[32m▏                                                [0m| 1/239 [00:00<01:47,  2.21batch/s][0m

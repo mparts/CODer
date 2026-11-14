@@ -1,0 +1,186 @@
+
+##### seed 3 | binary_generate | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 21:20:20.561795] Training binary_generate__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.2473 | dev loss 0.1462 | dev macro-F1 0.8632
+! Epoch 2/4 | train loss 0.1038 | dev loss 0.1415 | dev macro-F1 0.9137
+! Epoch 3/4 | train loss 0.0506 | dev loss 0.1653 | dev macro-F1 0.9198
+! Epoch 4/4 | train loss 0.0165 | dev loss 0.1742 | dev macro-F1 0.9204
+Best checkpoint: epoch 4, dev macro-F1 0.9204
+acc 0.958  macro-F1 0.928
+  human      Precision 0.973  Recall 0.977  F1 0.975  n=436
+  ai         Precision 0.890  Recall 0.871  F1 0.880  n=93
+
+
+   [2026-10-25 21:31:28.651258] Success!!
+====================================================================================================
+
+##### seed 3 | binary_generate | TEST
+====================================================================================================
+   [2026-10-25 21:31:33.767253] Evaluating binary_generate__unixcoder on the test split..
+
+
+acc 0.971  macro-F1 0.947
+  human      Precision 0.975  Recall 0.990  F1 0.982  n=905
+  ai         Precision 0.948  Recall 0.876  F1 0.911  n=186
+
+
+   [2026-10-25 21:31:51.734341] Success!!
+====================================================================================================
+
+##### seed 4 | binary_generate | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 21:31:56.615035] Training binary_generate__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.2598 | dev loss 0.1564 | dev macro-F1 0.8767
+! Epoch 2/4 | train loss 0.1156 | dev loss 0.1797 | dev macro-F1 0.9213
+! Epoch 3/4 | train loss 0.0489 | dev loss 0.1651 | dev macro-F1 0.9130
+! Epoch 4/4 | train loss 0.0135 | dev loss 0.2080 | dev macro-F1 0.9211
+Best checkpoint: epoch 2, dev macro-F1 0.9213
+acc 0.955  macro-F1 0.917
+  human      Precision 0.960  Recall 0.986  F1 0.973  n=436
+  ai         Precision 0.926  Recall 0.806  F1 0.862  n=93
+
+
+   [2026-10-25 21:43:05.344521] Success!!
+====================================================================================================
+
+##### seed 4 | binary_generate | TEST
+====================================================================================================
+   [2026-10-25 21:43:10.378875] Evaluating binary_generate__unixcoder on the test split..
+
+
+acc 0.963  macro-F1 0.932
+  human      Precision 0.967  Recall 0.990  F1 0.978  n=905
+  ai         Precision 0.945  Recall 0.833  F1 0.886  n=186
+
+
+   [2026-10-25 21:43:28.271070] Success!!
+====================================================================================================
+
+##### seed 5 | binary_generate | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 21:43:33.199696] Training binary_generate__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.2256 | dev loss 0.1837 | dev macro-F1 0.8416
+! Epoch 2/4 | train loss 0.0958 | dev loss 0.1534 | dev macro-F1 0.9152
+! Epoch 3/4 | train loss 0.0456 | dev loss 0.1540 | dev macro-F1 0.9240
+! Epoch 4/4 | train loss 0.0159 | dev loss 0.1798 | dev macro-F1 0.9336
+Best checkpoint: epoch 4, dev macro-F1 0.9336
+acc 0.962  macro-F1 0.934
+  human      Precision 0.973  Recall 0.982  F1 0.977  n=436
+  ai         Precision 0.910  Recall 0.871  F1 0.890  n=93
+
+
+   [2026-10-25 21:54:41.487215] Success!!
+====================================================================================================
+
+##### seed 5 | binary_generate | TEST
+====================================================================================================
+   [2026-10-25 21:54:46.606792] Evaluating binary_generate__unixcoder on the test split..
+
+
+acc 0.972  macro-F1 0.949
+  human      Precision 0.977  Recall 0.989  F1 0.983  n=905
+  ai         Precision 0.943  Recall 0.887  F1 0.914  n=186
+
+
+   [2026-10-25 21:55:04.517840] Success!!
+====================================================================================================
+
+##### seed 6 | binary_generate | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 21:55:09.405675] Training binary_generate__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.2247 | dev loss 0.2739 | dev macro-F1 0.8381
+! Epoch 2/4 | train loss 0.0994 | dev loss 0.1622 | dev macro-F1 0.9130
+! Epoch 3/4 | train loss 0.0488 | dev loss 0.1968 | dev macro-F1 0.9137
+! Epoch 4/4 | train loss 0.0170 | dev loss 0.2079 | dev macro-F1 0.9123
+Best checkpoint: epoch 3, dev macro-F1 0.9137
+acc 0.949  macro-F1 0.914
+  human      Precision 0.974  Recall 0.963  F1 0.969  n=436
+  ai         Precision 0.837  Recall 0.882  F1 0.859  n=93
+
+
+   [2026-10-25 22:06:15.764531] Success!!
+====================================================================================================
+
+##### seed 6 | binary_generate | TEST
+====================================================================================================
+   [2026-10-25 22:06:20.771911] Evaluating binary_generate__unixcoder on the test split..
+
+
+acc 0.964  macro-F1 0.937
+  human      Precision 0.979  Recall 0.978  F1 0.978  n=905
+  ai         Precision 0.893  Recall 0.898  F1 0.895  n=186
+
+
+   [2026-10-25 22:06:38.817279] Success!!
+====================================================================================================
+
+##### seed 7 | binary_generate | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 22:06:43.593726] Training binary_generate__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.2528 | dev loss 0.1540 | dev macro-F1 0.8860
+! Epoch 2/4 | train loss 0.1179 | dev loss 0.1461 | dev macro-F1 0.9130
+! Epoch 3/4 | train loss 0.0456 | dev loss 0.2115 | dev macro-F1 0.9000
+! Epoch 4/4 | train loss 0.0158 | dev loss 0.1951 | dev macro-F1 0.9247
+Best checkpoint: epoch 4, dev macro-F1 0.9247
+acc 0.957  macro-F1 0.925
+  human      Precision 0.973  Recall 0.975  F1 0.974  n=436
+  ai         Precision 0.880  Recall 0.871  F1 0.876  n=93
+
+
+   [2026-10-25 22:17:50.492883] Success!!
+====================================================================================================
+
+##### seed 7 | binary_generate | TEST
+====================================================================================================
+   [2026-10-25 22:17:55.445869] Evaluating binary_generate__unixcoder on the test split..
+
+
+acc 0.968  macro-F1 0.942
+  human      Precision 0.974  Recall 0.988  F1 0.981  n=905
+  ai         Precision 0.936  Recall 0.871  F1 0.903  n=186
+
+
+   [2026-10-25 22:18:13.366188] Success!!
+====================================================================================================
+
+##### seed 8 | binary_generate | --epochs 4 --lr 2e-05 --max_length 256 --batch_size 16 --class_weight none --dropout 0.0 --weight_decay 0.01 --warmup_ratio 0.1
+====================================================================================================
+   [2026-10-25 22:18:18.171137] Training binary_generate__unixcoder...
+
+
+! Epoch 1/4 | train loss 0.2462 | dev loss 0.1900 | dev macro-F1 0.8810
+! Epoch 2/4 | train loss 0.1052 | dev loss 0.1462 | dev macro-F1 0.8979
+! Epoch 3/4 | train loss 0.0460 | dev loss 0.2011 | dev macro-F1 0.8960
+! Epoch 4/4 | train loss 0.0199 | dev loss 0.1970 | dev macro-F1 0.9181
+Best checkpoint: epoch 4, dev macro-F1 0.9181
+acc 0.953  macro-F1 0.918
+  human      Precision 0.970  Recall 0.972  F1 0.971  n=436
+  ai         Precision 0.870  Recall 0.860  F1 0.865  n=93
+
+
+   [2026-10-25 22:29:25.879017] Success!!
+====================================================================================================
+
+##### seed 8 | binary_generate | TEST
+====================================================================================================
+   [2026-10-25 22:29:30.992017] Evaluating binary_generate__unixcoder on the test split..
+
+
+acc 0.962  macro-F1 0.930
+  human      Precision 0.972  Recall 0.982  F1 0.977  n=905
+  ai         Precision 0.909  Recall 0.860  F1 0.884  n=186
+
+
+   [2026-10-25 22:29:48.981869] Success!!
+====================================================================================================
