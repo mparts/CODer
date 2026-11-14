@@ -11,14 +11,18 @@
 \usepackage{inconsolata}
 \usepackage{graphicx}
 \usepackage{makecell}
+\usepackage{subcaption}
 
 \graphicspath{{figures/}}
 
 \title{Detecting LLM-Written Code on AIGCodeSet: Tuned Code Encoders versus N-gram Baselines}
 
 \author{Andreas Bartsiokas \\
-  LT2326 Machine Learning \\
-  October 2026}
+  LT2326 Machine learning for statistical NLP: Advanced \\
+  November 2026 \\
+  {\small \textbf{Code:} \href{https://github.com/mparts/CODer}{github.com/mparts/CODer}} \\
+  {\small \textbf{Data:} \href{https://huggingface.co/datasets/mparts/CODer-aigcodeset}{huggingface.co/datasets/mparts/CODer-aigcodeset}} \\
+  {\small \textbf{Models:} \href{https://huggingface.co/mparts/CODer-unixcoder}{huggingface.co/mparts/CODer-unixcoder}}}
 
 \begin{document}
 \maketitle
@@ -31,7 +35,7 @@ In this project I look at whether code written by an LLM can be told apart from 
 \section{Introduction}
 \label{sec:intro}
 
-Telling LLM-generated code apart from code written by students or competitive programmers is hard to do just by looking at it. This has been in the spotlight for the last couple of years: professors worry about students handing in AI-written work, and in industry many companies adopt AI tools while others enforce strict no-AI policies. I approach the problem empirically, with three questions: (i) How well do cheap lexical baselines and fine-tuned code encoders do when the split never shares a programming problem between train and test? (ii) Which hyperparameters and cues actually matter? (iii) Where do the models fail? This is my own evaluation and not a replication. The dataset paper \citep{demirok-kutlu-2025-aigcodeset} reports binary detection with classical classifiers on a random split, so my numbers cannot be compared with theirs directly. Recent work also shows that detection results depend a lot on the evaluation setting, and that they get worse under more realistic conditions, such as unseen generators, code written partly by humans and partly by AI, edited code, and distribution shift \citep{orel-etal-2026-aicd,demirok-etal-2026-multiaigcd}.
+Telling LLM-generated code apart from code written by students or competitive programmers is hard to do just by looking at it. This has been in the spotlight for the last couple of years: professors worry about students handing in AI-written work, and in industry many companies adopt AI tools while others enforce strict no-AI policies. I approach the problem empirically, with three questions: (i) How well do cheap lexical baselines and fine-tuned code encoders do on the task? (ii) Which hyperparameters and cues actually matter? (iii) Where do the models fail? I do not try to replicate the dataset paper \citep{demirok-kutlu-2025-aigcodeset}, which reports binary detection with classical classifiers on a random split, so my numbers cannot be compared with theirs directly. Recent work also shows that detection results depend a lot on the evaluation setting, and that they get worse under more realistic conditions, such as unseen generators, code written partly by humans and partly by AI, edited code, and distribution shift \citep{orel-etal-2026-aicd,demirok-etal-2026-multiaigcd}.
 
 % ---------------------------------------------------------------------------
 \section{Data}
@@ -39,7 +43,7 @@ Telling LLM-generated code apart from code written by students or competitive pr
 
 AIGCodeSet \citep{demirok-kutlu-2025-aigcodeset} pairs human solutions from CodeNet \citep{puri-etal-2021-codenet} with code from three LLMs (CodeLlama 34B, Codestral 22B and Gemini 1.5 Flash). The LLM code comes in two kinds: either the LLM writes a solution from scratch (\emph{generate}), or it \emph{edits} a human submission to fix a runtime error or a wrong output. This difference matters, because both AIGCodeSet and MultiAIGCD find that AI-edited code is much harder to detect than code generated from scratch \citep{demirok-kutlu-2025-aigcodeset,demirok-etal-2026-multiaigcd}. After deduplication I keep 7,531 samples and split them by problem into train (5,267), dev (739) and test (1,525), so no problem appears in more than one split. Some files have identical code under both labels (478 of them), and I remove those from every split, which leaves 4,953 train, 681 dev and 1,419 test files. Removing them makes the splits slightly easier than the raw data.
 
-From this I build four task variants: \texttt{binary} (human vs AI) and \texttt{multiclass} (human, GEMINI, LLAMA, CODESTRAL) use all the data, while \texttt{binary\_generate} and \texttt{multiclass\_generate} drop the edited code. Table~\ref{tab:sizes} shows the test set sizes. The models only ever see a normalized copy of the code, with line endings unified, tabs expanded to spaces, and trailing spaces, leading blank space and final-newline differences removed. I did this because an audit of the raw files had found formatting quirks that give the source away (for example, 21\% of LLAMA files start with whitespace). No metadata column is given to the models.
+From this I build four task variants: \texttt{binary} (human vs AI) and \texttt{multiclass} (human, GEMINI, LLAMA, CODESTRAL) use all the data, while \texttt{binary\_generate} and \texttt{multiclass\_generate} drop the edited code. Table~\ref{tab:sizes} shows the test set sizes. The models only ever see a normalized copy of the code, with line endings unified, tabs expanded to spaces, and trailing spaces, leading blank space and final-newline differences removed. I did this because an audit of the raw files had found formatting quirks that give the source away (for example, 21\% of LLAMA files start with whitespace). Obviously, no metadata column is given to the models.
 
 \begin{table*}[t]
   \centering
@@ -64,7 +68,7 @@ From this I build four task variants: \texttt{binary} (human vs AI) and \texttt{
 My baselines are TF-IDF features with logistic regression, on either word or character n-grams, with balanced class weights. For the character model I picked n-grams (1,6) and C=10 with 7-fold cross-validation on the training folds only, capping the features at 300k. The word model just reuses C=10.
 
 \paragraph{Encoders.}
-I fully fine-tune three pretrained code encoders: CodeBERT \citep{feng-etal-2020-codebert}, GraphCodeBERT \citep{guo-etal-2021-graphcodebert} and UniXcoder \citep{guo-etal-2022-unixcoder}. All of them use AdamW with a linear schedule and 10\% warmup, weight decay 0.01, batch size 16 and learning rate 2e-5, and train for 4 epochs without class weights. CodeBERT and GraphCodeBERT run at 128 tokens with the default dropout of 0.1, and I did not tune them further. Since half of the files are longer than 128 tokens, the final UniXcoder reads the first 256 tokens instead (in a two-seed test this gave about +.01, short of the tuning rule below), and it uses dropout 0.0 (\S\ref{sec:training}). I keep the checkpoint with the best dev macro-F1 at the end of an epoch. All models are trained on the train split only.
+I fully fine-tune three pretrained code encoders: CodeBERT \citep{feng-etal-2020-codebert}, GraphCodeBERT \citep{guo-etal-2021-graphcodebert} and UniXcoder \citep{guo-etal-2022-unixcoder}. All of them use AdamW with a linear schedule and 10\% warmup, weight decay 0.01, batch size 16 and learning rate 2e-5, and train for 4 epochs without class weights. CodeBERT and GraphCodeBERT run at 128 tokens with the default dropout of 0.1, and I did not tune them further. Since half of the files are longer than 128 tokens, the final UniXcoder reads the first 256 tokens instead (in a two-seed test this gave about +.01, short of the tuning rule below, Appendix~\ref{app:length}), and it uses dropout 0.0 (\S\ref{sec:training}). I keep the checkpoint with the best dev macro-F1 at the end of an epoch. All models are trained on the train split only.
 
 \paragraph{Tuning protocol.}
 I tuned on the two generate variants with seeds 0--2. A change was kept only if it raised the mean dev score by at least .01 on both variants, and at most one of the six paired seed comparisons went the other way. The dev set is small (only 93 AI files in \texttt{binary\_generate} and 31 per class in \texttt{multiclass\_generate}), so I treat differences below about .03 between single runs as ties. The final models use fresh seeds 3--8, and each run is evaluated on test only once.
@@ -79,7 +83,7 @@ The \emph{seed ensemble} averages the class probabilities of the six UniXcoder r
 \subsection{Final test results}
 \label{sec:final-test}
 
-UniXcoder beats the character baseline on all four variants (Table~\ref{tab:test}). However, a single model is significantly better only on \texttt{binary}. The seed ensemble is significantly better on three of the four, although only barely on \texttt{multiclass} and \texttt{binary\_generate}. The mix scores highest everywhere, but I only added it after seeing the dev results (where it was tied with the ensemble), so I report it as an extra column without an interval. On dev, the fresh seeds score close to the tuning seeds (.923 and .818 against .926 and .829 on the generate variants), so the tuning result is not just down to lucky seeds.
+UniXcoder beats the character baseline on all four variants (Table~\ref{tab:test}, per seed in Appendix~\ref{app:seeds} and ROC curves in Appendix~\ref{app:roc}). However, a single model is significantly better only on \texttt{binary}. The seed ensemble is significantly better on three of the four, although only barely on \texttt{multiclass} and \texttt{binary\_generate}. The mix scores highest everywhere, but I only added it after seeing the dev results (where it was tied with the ensemble), so I report it as an extra column without an interval. On dev, the fresh seeds score close to the tuning seeds (.923 and .818 against .926 and .829 on the generate variants), so the tuning result holds up on new seeds.
 
 \begin{table*}[t]
   \centering
@@ -102,7 +106,7 @@ UniXcoder beats the character baseline on all four variants (Table~\ref{tab:test
 \subsection{What mattered in training}
 \label{sec:training}
 
-At 128 tokens on dev, the choice of pretrained checkpoint made the biggest difference: UniXcoder scored .896 / .778, GraphCodeBERT .869 / .739 and CodeBERT .834 / .712 (\texttt{binary\_generate} / \texttt{multiclass\_generate}), and UniXcoder beat GraphCodeBERT in all six paired seed comparisons. This fits with recent benchmarks, which also find large differences between code encoders and newer transformer models on AI-code detection \citep{orel-etal-2026-aicd}. CodeBERT and GraphCodeBERT were never evaluated on test. Inverse-frequency class weights hurt the multiclass task (CodeBERT on \texttt{multiclass}: .404 with weights against .515 without), because they flooded the human-heavy dev set with false AI predictions.
+At 128 tokens on dev, the choice of pretrained checkpoint made the biggest difference: UniXcoder scored .896 / .778, GraphCodeBERT .869 / .739 and CodeBERT .834 / .712 (\texttt{binary\_generate} / \texttt{multiclass\_generate}), and UniXcoder beat GraphCodeBERT in all six paired seed comparisons. CodeBERT and GraphCodeBERT were never evaluated on test. Inverse-frequency class weights hurt the multiclass task (CodeBERT on \texttt{multiclass}: .404 with weights against .515 without), because they flooded the human-heavy dev set with false AI predictions.
 
 \begin{table*}[t]
   \centering
@@ -120,11 +124,11 @@ At 128 tokens on dev, the choice of pretrained checkpoint made the biggest diffe
     dropout 0.1: 384 tokens / lr 3e-5 / lr 1e-5 (6 epochs)  & .911 / .904 / .901    & .774 / .793 / .780 \\
     \hline
   \end{tabular}
-  \caption{UniXcoder, 256 tokens, dev macro-F1, seeds 0--2.}
+  \caption{UniXcoder, 256 tokens, dev macro-F1, seeds 0--2. Appendix~\ref{app:tuning} lists all tuning runs.}
   \label{tab:tuning}
 \end{table*}
 
-Out of all the changes in Table~\ref{tab:tuning}, only removing dropout gave a consistent gain across all six paired seeds. On \texttt{binary\_generate}, the training loss drops close to zero while dev F1 barely moves after the second epoch (Figure~\ref{fig:curves}). On the small multiclass dev set, dev F1 still moves by .02--.04 between neighbouring epochs.
+Out of all the changes in Table~\ref{tab:tuning}, only removing dropout gave a consistent gain across all six paired seeds. On \texttt{binary\_generate}, the training loss drops close to zero while dev F1 barely moves after the second epoch (Figure~\ref{fig:curves}). On the small multiclass dev set, dev F1 still moves by .02--.04 between neighbouring epochs (Figure~\ref{fig:app-curves}).
 
 \begin{figure}[t]
   \includegraphics[width=\columnwidth]{training_curves_seed5_binary_generate.png}
@@ -154,7 +158,7 @@ To see which cues the character baseline relies on, I ran an ablation on its inp
   \label{tab:ablation}
 \end{table}
 
-Masking identifiers costs the most (about .026, Table~\ref{tab:ablation}), but that is only about one standard deviation across folds, so the ablations rank the cues rather than show significant effects. Many of the top n-grams of the full model are pieces of names, like \texttt{\_}, \texttt{get\_} and \texttt{min\_} (Figure~\ref{fig:ngrams}). Still, most of the signal survives name masking, which suggests that no single cue explains detection on its own. The ablations are also not additive, and they only show how much a cue contributes, not which class it points towards. My experiments cannot tell whether the encoders use the same cues.
+Masking identifiers costs the most (about .026, Table~\ref{tab:ablation}), although that is only about one standard deviation across folds. Many of the top n-grams of the full model are pieces of names, like \texttt{\_}, \texttt{get\_} and \texttt{min\_} (Figure~\ref{fig:ngrams}, more in Appendix~\ref{app:ngrams}). Still, most of the signal survives name masking, so none of the three cues explains detection on its own. I did not check whether the encoders use the same cues.
 
 \begin{figure}[t]
   \includegraphics[width=\columnwidth]{top_features_char_binary_generate.png}
@@ -186,7 +190,7 @@ Masking identifiers costs the most (about .026, Table~\ref{tab:ablation}), but t
   \label{tab:breakdown}
 \end{table}
 
-Edited code is the main source of error (Table~\ref{tab:breakdown}). It makes up 328 of the 514 AI files in \texttt{binary}, and it is detected far less often than code written from scratch, which explains most of the gap between \texttt{binary} (.78) and \texttt{binary\_generate} (.94). This is in line with both AIGCodeSet and MultiAIGCD, where AI-edited code is also harder to detect than code generated from scratch \citep{demirok-kutlu-2025-aigcodeset,demirok-etal-2026-multiaigcd}. In \texttt{multiclass\_generate}, the ensemble predicts Human for 37\% of the GEMINI files, but another LLM for only 8\% (LLAMA 2\%, CODESTRAL 6\%). Figure~\ref{fig:confusion} shows a single seed rather than the ensemble. So Gemini is hard because its code looks human to the models, not because it looks like the other two LLMs. When the code is written from scratch, telling the LLMs apart mostly works: F1 is .91 (LLAMA), .82 (CODESTRAL) and .64 (GEMINI) for the ensemble, and .96, .86 and .67 for the mix. The original AIGCodeSet paper \citep{demirok-kutlu-2025-aigcodeset} also reports lower recall for code generated by Gemini than by CodeLlama or Codestral. Finally, on the full data about 1 in 10 human files gets flagged as AI.
+Edited code is the main source of error (Table~\ref{tab:breakdown}). It makes up 328 of the 514 AI files in \texttt{binary}, and it is detected far less often than code written from scratch, which explains most of the gap between \texttt{binary} (.78) and \texttt{binary\_generate} (.94). In \texttt{multiclass\_generate}, the ensemble predicts Human for 37\% of the GEMINI files, but another LLM for only 8\% (LLAMA 2\%, CODESTRAL 6\%). So when the models get Gemini wrong, they mostly take it for human code. Figure~\ref{fig:confusion} shows this for a single seed (more in Appendices~\ref{app:acc} and~\ref{app:cm}). When the code is written from scratch, telling the LLMs apart mostly works: F1 is .91 (LLAMA), .82 (CODESTRAL) and .64 (GEMINI) for the ensemble, and .96, .86 and .67 for the mix. Finally, on the full data about 1 in 10 human files gets flagged as AI.
 
 \begin{figure}[t]
   \includegraphics[width=\columnwidth]{confusion_matrix_seed3_multiclass_generate.png}
@@ -199,31 +203,295 @@ Edited code is the main source of error (Table~\ref{tab:breakdown}). It makes up
 \label{sec:discussion}
 
 \paragraph{Supported by my results.}
-(1) A tuned character n-gram model is a strong baseline, and CodeBERT and GraphCodeBERT do not reach it on dev under a problem-grouped split. (2) UniXcoder without dropout is at least as good on every variant, and clearly better on \texttt{binary}. (3) Averaging seeds gives a small but reliable gain, and combining the encoder with the n-gram model gave the best test scores. (4) Edited code and Gemini are the hardest cases. Point (4) closely matches AIGCodeSet: there too, performance varies a lot between generation scenarios, and Gemini's code is generally harder to spot than CodeLlama's or Codestral's \citep{demirok-kutlu-2025-aigcodeset}. It also agrees with MultiAIGCD, which finds much lower performance on AI-edited code than on code generated from scratch, across several languages and detector architectures \citep{demirok-etal-2026-multiaigcd}.
+(1) A tuned character n-gram model is a strong baseline, and CodeBERT and GraphCodeBERT do not reach it on dev under a problem-grouped split. (2) UniXcoder without dropout is at least as good on every variant, and clearly better on \texttt{binary}. (3) Averaging seeds gives a small but reliable gain, and combining the encoder with the n-gram model gave the best test scores. (4) Edited code and Gemini are the hardest cases, as they were in the AIGCodeSet paper \citep{demirok-kutlu-2025-aigcodeset}.
 
-\paragraph{Speculation, not tested.}
-UniXcoder might do better than CodeBERT because of its pretraining objectives, but I did not run a pretraining ablation to check this. Dropout may hurt because the training set is small, although I only observed the effect and did not test why. The mix may help because the two models make different mistakes, which I did not measure directly. Finally, Gemini may simply write code that is closer to human style, but I did not analyse its style.
+\paragraph{Guesses I did not test.}
+UniXcoder might do better than CodeBERT because of its pretraining objectives. Dropout may hurt because the training set is small. The mix may help because the two models make different mistakes. And Gemini may simply write code that is closer to human style.
 
 % ---------------------------------------------------------------------------
 \section{Conclusion}
 \label{sec:conclusion}
 
-On AIGCodeSet, a tuned UniXcoder (dropout 0.0, 256 tokens) is ahead of the best n-gram baseline on every variant, with a clear margin on binary detection and smaller, mostly non-significant margins on the rest. Seed averaging and mixing with the baseline add a little on top. The hard cases are still edited code and Gemini. The most useful next steps would be an external human-only test set, to check false positives, and a split that holds out one LLM, to test how well the models generalize. This matches recent benchmark results: obviously AI-written code is no longer the main problem, but edited or hybrid code is, and so is keeping performance up under more realistic evaluation conditions \citep{orel-etal-2026-aicd,demirok-etal-2026-multiaigcd}.
+On AIGCodeSet, a tuned UniXcoder (dropout 0.0, 256 tokens) is ahead of the best n-gram baseline on every variant, with a clear margin on binary detection and smaller, mostly non-significant margins on the rest. Seed averaging and mixing with the baseline add a little on top. The hard cases are still edited code and Gemini. The most useful next steps would be an external human-only test set, to check false positives, and a split that holds out one LLM, to test how well the models generalize.
 
 % ---------------------------------------------------------------------------
 \section*{Limitations}
 
 \begin{itemize}
-  \item The dev set is small, so tuning decisions on the multiclass variants are noisy. I compared about 20 configurations on dev. The fresh seeds score only .003--.011 lower there, which rules out lucky seeds, but not overfitting to dev.
+  \item The dev set is small, so tuning decisions on the multiclass variants are noisy. I compared about 20 configurations on dev, so I may have overfit to it. The fresh seeds score only .003--.011 lower there, which rules out lucky seeds.
   \item \texttt{binary} and \texttt{multiclass} reuse a configuration that was tuned on the generate variants only.
   \item The test sets are small for the LLM classes (61--63 files each in the generate variants), so several intervals include zero.
   \item I did not keep the cross-validation and ablation code, so Table~\ref{tab:ablation} cannot be re-run.
   \item I added the mix after seeing dev, and I did not tune its weight.
   \item Everything comes from a single data source: there is no out-of-distribution evaluation and no external human-only test set (such as MBPP).
-  \item I did not run ModernBERT (the installed library was too old for it) or a larger code LLM with LoRA.
+  \item I didn't run a larger code LLM with LoRA.
   \item I only use one dataset and one programming language, and recent benchmarks show that detector performance can vary a lot across languages, generators and evaluation scenarios \citep{orel-etal-2026-aicd,demirok-etal-2026-multiaigcd}.
 \end{itemize}
 
 \bibliography{coder_paper}
+
+% ---------------------------------------------------------------------------
+% \twocolumn[...] keeps each full-width table or figure grid on the same page as its section.
+\appendix
+
+\twocolumn[{%
+\section{All tuning runs}
+\label{app:tuning}
+
+Table~\ref{tab:alltuning} lists every tuning run, including the CodeBERT and GraphCodeBERT runs and the 128-token runs on \texttt{binary} and \texttt{multiclass}, which Table~\ref{tab:tuning} leaves out. Only the 128-token runs cover all four variants. Everything at 256 tokens and above was tuned on the generate variants only (\S\ref{sec:methods}).
+
+\smallskip
+{\centering
+  \captionsetup{type=table}
+  \small
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{lcccccccccc}
+    \hline
+    \textbf{Model} & \textbf{Len} & \textbf{Ep} & \textbf{LR} & \textbf{BS} & \textbf{WD} & \textbf{Drop} & \textbf{binary} & \textbf{multiclass} & \makecell{\textbf{binary\_}\\\textbf{generate}} & \makecell{\textbf{multiclass\_}\\\textbf{generate}} \\
+    \hline
+    char LogReg            & --  & -- & --   & -- & --   & --  & .739            & .568            & .911            & .794 \\
+    word LogReg            & --  & -- & --   & -- & --   & --  & .672            & .455            & .856            & .688 \\
+    \hline
+    CodeBERT               & 128 & 4  & 2e-5 & 16 & 0.01 & 0.1 & .724 $\pm$ .009 & .512 $\pm$ .011 & .834 $\pm$ .009 & .712 $\pm$ .028 \\
+    CodeBERT$^\dagger$     & 256 & 4  & 2e-5 & 16 & 0.01 & 0.1 & --              & --              & .853 $\pm$ .028 & .726 $\pm$ .001 \\
+    GraphCodeBERT          & 128 & 4  & 2e-5 & 16 & 0.01 & 0.1 & --              & --              & .869 $\pm$ .012 & .739 $\pm$ .015 \\
+    UniXcoder              & 128 & 4  & 2e-5 & 16 & 0.01 & 0.1 & .749 $\pm$ .005 & .541 $\pm$ .011 & .896 $\pm$ .005 & .778 $\pm$ .004 \\
+    \hline
+    UniXcoder              & 256 & 4  & 2e-5 & 16 & 0.01 & 0.1 & --              & --              & .906 $\pm$ .010 & .798 $\pm$ .025 \\
+    UniXcoder              & 256 & 6  & 2e-5 & 16 & 0.01 & 0.1 & --              & --              & .907 $\pm$ .007 & .816 $\pm$ .016 \\
+    UniXcoder              & 256 & 4  & 3e-5 & 16 & 0.01 & 0.1 & --              & --              & .904 $\pm$ .008 & .793 $\pm$ .011 \\
+    UniXcoder              & 256 & 6  & 1e-5 & 16 & 0.01 & 0.1 & --              & --              & .901 $\pm$ .016 & .780 $\pm$ .016 \\
+    UniXcoder              & 384 & 4  & 2e-5 & 16 & 0.01 & 0.1 & --              & --              & .911 $\pm$ .008 & .774 $\pm$ .009 \\
+    UniXcoder              & 256 & 4  & 2e-5 & 16 & 0.01 & 0.2 & --              & --              & .862 $\pm$ .007 & .751 $\pm$ .016 \\
+    \hline
+    \textbf{UniXcoder}     & \textbf{256} & \textbf{4} & \textbf{2e-5} & \textbf{16} & \textbf{0.01} & \textbf{0.0} & -- & -- & \textbf{.926} $\pm$ \textbf{.005} & \textbf{.829} $\pm$ \textbf{.023} \\
+    UniXcoder              & 256 & 6  & 2e-5 & 16 & 0.01 & 0.0 & --              & --              & .930 $\pm$ .004 & .815 $\pm$ .019 \\
+    UniXcoder              & 256 & 4  & 2e-5 & 8  & 0.01 & 0.0 & --              & --              & .924 $\pm$ .014 & .819 $\pm$ .008 \\
+    UniXcoder              & 256 & 4  & 2e-5 & 32 & 0.01 & 0.0 & --              & --              & .921 $\pm$ .011 & .803 $\pm$ .015 \\
+    UniXcoder              & 256 & 4  & 2e-5 & 16 & 0.1  & 0.0 & --              & --              & .921 $\pm$ .014 & .821 $\pm$ .010 \\
+    \hline
+  \end{tabular}
+  \caption{All tuning runs, dev macro-F1 at the best epoch, mean $\pm$ std over seeds 0--2 ($^\dagger$seeds 0--1 only). Len: tokens read, Ep: epochs, LR: learning rate, BS: batch size, WD: weight decay, Drop: dropout. All encoders use AdamW with a linear schedule, 10\% warmup and no class weights. The baselines are fit once. --: not run. The final UniXcoder configuration is in bold.}
+  \label{tab:alltuning}
+\par}
+\medskip
+
+\section{Results per seed}
+\label{app:seeds}
+
+Table~\ref{tab:seeds} lists the six final UniXcoder runs behind Table~\ref{tab:test}. On \texttt{binary} the seeds are within .007 of each other on test, but on \texttt{multiclass} they go from .534 (seed 6) to .607 (seed 8).
+
+\smallskip
+{\centering
+  \captionsetup{type=table}
+  \small
+  \begin{tabular}{llccccccc}
+    \hline
+    & & \multicolumn{6}{c}{\textbf{Seed}} & \\
+    \textbf{Variant} & \textbf{Split} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{Mean $\pm$ std} \\
+    \hline
+    \texttt{binary}               & dev  & .757 & .763 & .757 & .767 & .755 & .764 & .760 $\pm$ .005 \\
+    & test & .774 & .773 & .769 & .771 & .776 & .772 & .772 $\pm$ .002 \\
+    \texttt{multiclass}           & dev  & .546 & .580 & .567 & .548 & .576 & .583 & .567 $\pm$ .016 \\
+    & test & .554 & .588 & .574 & .534 & .570 & .607 & .571 $\pm$ .026 \\
+    \texttt{binary\_generate}     & dev  & .928 & .917 & .934 & .914 & .925 & .918 & .923 $\pm$ .007 \\
+    & test & .947 & .932 & .949 & .937 & .942 & .930 & .939 $\pm$ .008 \\
+    \texttt{multiclass\_generate} & dev  & .810 & .807 & .849 & .826 & .819 & .794 & .818 $\pm$ .019 \\
+    & test & .819 & .846 & .825 & .861 & .829 & .841 & .837 $\pm$ .016 \\
+    \hline
+  \end{tabular}
+  \caption{Macro-F1 of the final UniXcoder runs, per seed. The test means are the single-seed column of Table~\ref{tab:test}.}
+  \label{tab:seeds}
+\par}
+\medskip
+}]
+
+\section{Input length}
+\label{app:length}
+
+The encoders only read the start of each file. With the UniXcoder tokenizer, the median training file is 128 tokens long, 90\% of the files are shorter than about 365 tokens, and the longest one has 4,360. 49.8\% of the files are longer than 128 tokens, 20.7\% longer than 256, 9.1\% longer than 384 and 5.1\% longer than 512. Human and AI files are about the same length (median 129 and 123 tokens), so cutting them does not give the label away. I did not keep the code for this count.
+
+Table~\ref{tab:length} compares 256 and 128 tokens on the same seeds. For UniXcoder, 256 tokens gave about +.01 on both generate variants, which is just short of the tuning rule (\S\ref{sec:methods}). Seed 2 at 256 tokens was only run later, as the starting point of Table~\ref{tab:tuning}, and gives +.007 and +.039. Reading 384 tokens did not help (Table~\ref{tab:alltuning}).
+
+\medskip
+{\centering
+  \captionsetup{type=table}
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lcccc}
+    \hline
+    & \multicolumn{2}{c}{\textbf{UniXcoder}} & \multicolumn{2}{c}{\textbf{CodeBERT}} \\
+    \textbf{Seed} & \makecell{\textbf{binary\_}\\\textbf{generate}} & \makecell{\textbf{multiclass\_}\\\textbf{generate}} & \makecell{\textbf{binary\_}\\\textbf{generate}} & \makecell{\textbf{multiclass\_}\\\textbf{generate}} \\
+    \hline
+    0    & +.004 & $-$.003 & +.049   & +.044 \\
+    1    & +.018 & +.023   & $-$.006 & +.009 \\
+    \hline
+    Mean & +.011 & +.010   & +.022   & +.027 \\
+    \hline
+  \end{tabular}
+  \caption{Dev macro-F1 at 256 tokens minus 128 tokens, same seed, dropout 0.1.}
+  \label{tab:length}
+\par}
+
+\twocolumn[{%
+\section{ROC curves}
+\label{app:roc}
+
+Figure~\ref{fig:app-roc} shows ROC curves on test for the binary variants, with AI as the positive class. In this and the following appendices, the single UniXcoder runs are seed 3, as in Figure~\ref{fig:confusion}, and the training curves are seed 5, as in Figure~\ref{fig:curves}. Seed 3 is close to the mean on \texttt{binary} (.774 against .772), but below it on \texttt{multiclass} (.554 against .571, Table~\ref{tab:seeds}). None of the figures show the seed ensemble or the mix.
+
+\medskip
+{\centering
+  \captionsetup{type=figure}
+  \begin{subfigure}{0.37\textwidth}
+    \includegraphics[width=\linewidth]{roc_seed3_binary.png}
+    \caption{UniXcoder, \texttt{binary}}
+  \end{subfigure}\hspace{0.04\textwidth}%
+  \begin{subfigure}{0.37\textwidth}
+    \includegraphics[width=\linewidth]{roc_seed3_binary_generate.png}
+    \caption{UniXcoder, \texttt{binary\_generate}}
+  \end{subfigure}\\[6pt]
+  \begin{subfigure}{0.37\textwidth}
+    \includegraphics[width=\linewidth]{roc_char_binary.png}
+    \caption{char LogReg, \texttt{binary}}
+  \end{subfigure}\hspace{0.04\textwidth}%
+  \begin{subfigure}{0.37\textwidth}
+    \includegraphics[width=\linewidth]{roc_char_binary_generate.png}
+    \caption{char LogReg, \texttt{binary\_generate}}
+  \end{subfigure}\\[6pt]
+  \begin{subfigure}{0.37\textwidth}
+    \includegraphics[width=\linewidth]{roc_word_binary.png}
+    \caption{word LogReg, \texttt{binary}}
+  \end{subfigure}\hspace{0.04\textwidth}%
+  \begin{subfigure}{0.37\textwidth}
+    \includegraphics[width=\linewidth]{roc_word_binary_generate.png}
+    \caption{word LogReg, \texttt{binary\_generate}}
+  \end{subfigure}
+  \caption{ROC curves on test, with AI as the positive class. The AUC is in each plot's title.}
+  \label{fig:app-roc}
+\par}
+}]
+
+\twocolumn[{%
+\section{Training curves}
+\label{app:curves}
+
+Figure~\ref{fig:app-curves} shows the training curves of UniXcoder on dev, for all four variants.
+
+\medskip
+{\centering
+  \captionsetup{type=figure}
+  \begin{subfigure}{0.44\textwidth}
+    \includegraphics[width=\linewidth]{training_curves_seed5_binary.png}
+    \caption{\texttt{binary}}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.44\textwidth}
+    \includegraphics[width=\linewidth]{training_curves_seed5_multiclass.png}
+    \caption{\texttt{multiclass}}
+  \end{subfigure}\\[6pt]
+  \begin{subfigure}{0.44\textwidth}
+    \includegraphics[width=\linewidth]{training_curves_seed5_binary_generate.png}
+    \caption{\texttt{binary\_generate}}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.44\textwidth}
+    \includegraphics[width=\linewidth]{training_curves_seed5_multiclass_generate.png}
+    \caption{\texttt{multiclass\_generate}}
+  \end{subfigure}
+  \caption{Training curves of UniXcoder, seed 5, dev macro-F1 and loss, 5 evaluations per epoch. Panel (c) is Figure~\ref{fig:curves}.}
+  \label{fig:app-curves}
+\par}
+\medskip
+
+\section{Accuracy by source}
+\label{app:acc}
+
+Figure~\ref{fig:app-acc} shows the share of test files from each source that get the right class, on the multiclass variants. In \texttt{multiclass}, the edited files rarely get the right LLM: UniXcoder gets 5\% of the edited GEMINI files right, against 50\% of the generated ones.
+
+\medskip
+{\centering
+  \captionsetup{type=figure}
+  \begin{subfigure}[t]{0.35\textwidth}
+    \includegraphics[width=\linewidth]{accuracy_by_source_seed3_multiclass.png}
+    \caption{UniXcoder, \texttt{multiclass}}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.35\textwidth}
+    \includegraphics[width=\linewidth]{accuracy_by_source_seed3_multiclass_generate.png}
+    \caption{UniXcoder, \texttt{multiclass\_generate}}
+  \end{subfigure}\\[6pt]
+  \begin{subfigure}[t]{0.35\textwidth}
+    \includegraphics[width=\linewidth]{accuracy_by_source_char_multiclass.png}
+    \caption{char LogReg, \texttt{multiclass}}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.35\textwidth}
+    \includegraphics[width=\linewidth]{accuracy_by_source_char_multiclass_generate.png}
+    \caption{char LogReg, \texttt{multiclass\_generate}}
+  \end{subfigure}
+  \caption{Share of test files classified correctly, by true source, on the multiclass variants. The dashed line is the overall accuracy.}
+  \label{fig:app-acc}
+\par}
+}]
+
+\twocolumn[{%
+\section{Confusion matrices}
+\label{app:cm}
+
+Figure~\ref{fig:app-cm} shows the confusion matrices of all three models on the multiclass variants, on test.
+
+\medskip
+{\centering
+  \captionsetup{type=figure}
+  \begin{subfigure}{0.38\textwidth}
+    \includegraphics[width=\linewidth]{confusion_matrix_seed3_multiclass.png}
+    \caption{UniXcoder, \texttt{multiclass}}
+  \end{subfigure}\hspace{0.04\textwidth}%
+  \begin{subfigure}{0.38\textwidth}
+    \includegraphics[width=\linewidth]{confusion_matrix_seed3_multiclass_generate.png}
+    \caption{UniXcoder, \texttt{multiclass\_generate}}
+  \end{subfigure}\\[6pt]
+  \begin{subfigure}{0.38\textwidth}
+    \includegraphics[width=\linewidth]{confusion_matrix_char_multiclass.png}
+    \caption{char LogReg, \texttt{multiclass}}
+  \end{subfigure}\hspace{0.04\textwidth}%
+  \begin{subfigure}{0.38\textwidth}
+    \includegraphics[width=\linewidth]{confusion_matrix_char_multiclass_generate.png}
+    \caption{char LogReg, \texttt{multiclass\_generate}}
+  \end{subfigure}\\[6pt]
+  \begin{subfigure}{0.38\textwidth}
+    \includegraphics[width=\linewidth]{confusion_matrix_word_multiclass.png}
+    \caption{word LogReg, \texttt{multiclass}}
+  \end{subfigure}\hspace{0.04\textwidth}%
+  \begin{subfigure}{0.38\textwidth}
+    \includegraphics[width=\linewidth]{confusion_matrix_word_multiclass_generate.png}
+    \caption{word LogReg, \texttt{multiclass\_generate}}
+  \end{subfigure}
+  \caption{Confusion matrices on test, as the share of each true class with the count in parentheses. Panel (b) is Figure~\ref{fig:confusion}.}
+  \label{fig:app-cm}
+\par}
+}]
+
+\twocolumn[{%
+\section{Top n-grams}
+\label{app:ngrams}
+
+Figure~\ref{fig:app-ngrams} shows more top n-grams: both baselines on \texttt{multiclass\_generate}, and the word model on \texttt{binary\_generate}.
+
+\medskip
+{\centering
+  \captionsetup{type=figure}
+  \begin{subfigure}{\textwidth}
+    \includegraphics[width=\linewidth]{top_features_char_multiclass_generate.png}
+    \caption{char LogReg, \texttt{multiclass\_generate}}
+  \end{subfigure}\\[6pt]
+  \begin{subfigure}{\textwidth}
+    \includegraphics[width=\linewidth]{top_features_word_multiclass_generate.png}
+    \caption{word LogReg, \texttt{multiclass\_generate}}
+  \end{subfigure}\\[6pt]
+  \begin{subfigure}{0.5\textwidth}
+    \includegraphics[width=\linewidth]{top_features_word_binary_generate.png}
+    \caption{word LogReg, \texttt{binary\_generate}}
+  \end{subfigure}
+  \caption{Top n-grams of the LogReg baselines. \textperiodcentered{} is a space, \P{} a newline. Figure~\ref{fig:ngrams} shows the char model on \texttt{binary\_generate}.}
+  \label{fig:app-ngrams}
+\par}
+}]
 
 \end{document}
