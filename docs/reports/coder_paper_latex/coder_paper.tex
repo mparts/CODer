@@ -28,14 +28,14 @@
 \maketitle
 
 \begin{abstract}
-In this project I look at whether code written by an LLM can be told apart from human-written code, and which LLM wrote it, using the AIGCodeSet dataset. I compare word and character n-gram logistic regression with fine-tuned code encoders (CodeBERT, GraphCodeBERT, UniXcoder) on four task variants, with splits grouped by problem and a test set that was used only once. On dev, a tuned character n-gram baseline does better than CodeBERT and GraphCodeBERT. A tuned UniXcoder beats the baseline on all four variants, but the difference is statistically clear only for binary detection. Averaging six seeds and mixing the result with the baseline improves the scores a bit more. Most errors come from two places: code that an LLM \emph{edited} from a human submission (detected only 27--54\% of the time, against 94--98\% for code written from scratch), and Gemini, whose from-scratch code is often classified as human. In an ablation of the character baseline, identifier names turn out to be the strongest cue.
+In this project I look at whether code written by an LLM can be told apart from human-written code, and which LLM wrote it, using the AIGCodeSet dataset. I compare word and character n-gram logistic regression with fine-tuned code encoders (CodeBERT, GraphCodeBERT, UniXcoder) on four task variants, with splits grouped by problem and a test set that was used only once. On dev, a tuned character n-gram baseline does better than CodeBERT and GraphCodeBERT. A tuned UniXcoder beats the baseline on all four variants, but for a single model the difference is statistically clear only for binary detection. Averaging six seeds and mixing the result with the baseline improves the scores a bit more. Most errors come from two places: code that an LLM \emph{edited} from a human submission (detected only 27--54\% of the time, against 94--98\% for code written from scratch), and Gemini, whose from-scratch code is often classified as human. In an ablation of the character baseline, identifier names turn out to be the strongest cue.
 \end{abstract}
 
 % ---------------------------------------------------------------------------
 \section{Introduction}
 \label{sec:intro}
 
-Telling LLM-generated code apart from code written by students or competitive programmers is hard to do just by looking at it. This has been in the spotlight for the last couple of years: professors worry about students handing in AI-written work, and in industry many companies adopt AI tools while others enforce strict no-AI policies. I approach the problem empirically, with three questions: (i) How well do cheap lexical baselines and fine-tuned code encoders do on the task? (ii) Which hyperparameters and cues actually matter? (iii) Where do the models fail? I do not try to replicate the dataset paper \citep{demirok-kutlu-2025-aigcodeset}, which reports binary detection with classical classifiers on a random split, so my numbers cannot be compared with theirs directly. Recent work also shows that detection results depend a lot on the evaluation setting, and that they get worse under more realistic conditions, such as unseen generators, code written partly by humans and partly by AI, edited code, and distribution shift \citep{orel-etal-2026-aicd,demirok-etal-2026-multiaigcd}.
+Telling LLM-generated code apart from code written by students or competitive programmers is hard to do just by looking at it. This has been in the spotlight for the last couple of years: professors worry about students handing in AI-written work, and in industry many companies adopt AI tools while others enforce strict no-AI policies. I look at three questions: (i) How well do cheap lexical baselines and fine-tuned code encoders do on the task? (ii) Which hyperparameters and cues actually matter? (iii) Where do the models fail? I do not try to replicate the dataset paper \citep{demirok-kutlu-2025-aigcodeset}, which reports binary detection with classical classifiers on a random split, so my numbers cannot be compared with theirs directly. Recent work also shows that detection results depend a lot on the evaluation setting, and that they get worse under more realistic conditions, such as unseen generators, code written partly by humans and partly by AI, edited code, and distribution shift \citep{orel-etal-2026-aicd,demirok-etal-2026-multiaigcd}.
 
 % ---------------------------------------------------------------------------
 \section{Data}
@@ -106,7 +106,7 @@ UniXcoder beats the character baseline on all four variants (Table~\ref{tab:test
 \subsection{What mattered in training}
 \label{sec:training}
 
-At 128 tokens on dev, the choice of pretrained checkpoint made the biggest difference: UniXcoder scored .896 / .778, GraphCodeBERT .869 / .739 and CodeBERT .834 / .712 (\texttt{binary\_generate} / \texttt{multiclass\_generate}), and UniXcoder beat GraphCodeBERT in all six paired seed comparisons. CodeBERT and GraphCodeBERT were never evaluated on test. Inverse-frequency class weights hurt the multiclass task (CodeBERT on \texttt{multiclass}: .404 with weights against .515 without), because they flooded the human-heavy dev set with false AI predictions.
+At 128 tokens on dev, the choice of pretrained checkpoint made the biggest difference: UniXcoder scored .896 / .778, GraphCodeBERT .869 / .739 and CodeBERT .834 / .712 (\texttt{binary\_generate} / \texttt{multiclass\_generate}), and UniXcoder beat GraphCodeBERT in all six paired seed comparisons. CodeBERT and GraphCodeBERT were never evaluated on test. Inverse-frequency class weights hurt the multiclass task (in an early 3-epoch CodeBERT run on \texttt{multiclass}: .404 with weights against .515 without), because they flooded the human-heavy dev set with false AI predictions.
 
 \begin{table*}[t]
   \centering
@@ -203,7 +203,7 @@ Edited code is the main source of error (Table~\ref{tab:breakdown}). It makes up
 \label{sec:discussion}
 
 \paragraph{Supported by my results.}
-(1) A tuned character n-gram model is a strong baseline, and CodeBERT and GraphCodeBERT do not reach it on dev under a problem-grouped split. (2) UniXcoder without dropout is at least as good on every variant, and clearly better on \texttt{binary}. (3) Averaging seeds gives a small but reliable gain, and combining the encoder with the n-gram model gave the best test scores. (4) Edited code and Gemini are the hardest cases, as they were in the AIGCodeSet paper \citep{demirok-kutlu-2025-aigcodeset}.
+(1) A tuned character n-gram model is a strong baseline, and CodeBERT and GraphCodeBERT do not reach it on dev under a problem-grouped split. (2) UniXcoder without dropout is ahead of the character model on every variant, and clearly ahead on \texttt{binary}. (3) Averaging seeds helped a little on every variant, and combining the encoder with the n-gram model gave the best test scores. (4) Edited code and Gemini are the hardest cases, as they were in the AIGCodeSet paper \citep{demirok-kutlu-2025-aigcodeset}.
 
 \paragraph{Guesses I did not test.}
 UniXcoder might do better than CodeBERT because of its pretraining objectives. Dropout may hurt because the training set is small. The mix may help because the two models make different mistakes. And Gemini may simply write code that is closer to human style.
@@ -218,13 +218,13 @@ On AIGCodeSet, a tuned UniXcoder (dropout 0.0, 256 tokens) is ahead of the best 
 \section*{Limitations}
 
 \begin{itemize}
-  \item The dev set is small, so tuning decisions on the multiclass variants are noisy. I compared about 20 configurations on dev, so I may have overfit to it. The fresh seeds score only .003--.011 lower there, which rules out lucky seeds.
+  \item The dev set is small, so tuning decisions on the multiclass variants are noisy. I compared about 20 configurations on dev, so I may have overfit to it. The fresh seeds score only .003--.011 lower there, so the tuning seeds were probably not just lucky.
   \item \texttt{binary} and \texttt{multiclass} reuse a configuration that was tuned on the generate variants only.
   \item The test sets are small for the LLM classes (61--63 files each in the generate variants), so several intervals include zero.
   \item I did not keep the cross-validation and ablation code, so Table~\ref{tab:ablation} cannot be re-run.
   \item I added the mix after seeing dev, and I did not tune its weight.
   \item Everything comes from a single data source: there is no out-of-distribution evaluation and no external human-only test set (such as MBPP).
-  \item I didn't run a larger code LLM with LoRA.
+  \item I did not try a larger code LLM (for example with LoRA).
   \item I only use one dataset and one programming language, and recent benchmarks show that detector performance can vary a lot across languages, generators and evaluation scenarios \citep{orel-etal-2026-aicd,demirok-etal-2026-multiaigcd}.
 \end{itemize}
 
