@@ -10,12 +10,12 @@ The paper: [coder_paper.pdf](docs/reports/coder_paper.pdf) ([LaTeX source](docs/
 
 Test macro-F1, from Table 2 of the paper (which also has word LogReg and the bootstrap intervals). UniXcoder, 1 seed is the mean ± std over seeds 3-8. The seed ensemble averages their class probabilities, and the mix averages the ensemble with char LogReg. The mix was added after seeing dev and its weight was not tuned, so the paper gives it no interval.
 
-| Variant | char LogReg | UniXcoder, 1 seed | Seed ensemble | Mix 0.5 |
-|---|---|---|---|---|
-| `binary` (human vs AI) | .743 | .772 ± .002 | .778 | .783 |
-| `multiclass` (human, GEMINI, LLAMA, CODESTRAL) | .554 | .571 ± .026 | .595 | .614 |
-| `binary_generate` | .923 | .939 ± .008 | .943 | .948 |
-| `multiclass_generate` | .808 | .837 ± .016 | .839 | .867 |
+| Variant                                        | char LogReg | UniXcoder, 1 seed | Seed ensemble | Mix 0.5 |
+| ---------------------------------------------- | ----------- | ----------------- | ------------- | ------- |
+| `binary` (human vs AI)                         | .743        | .772 ± .002       | .778          | .783    |
+| `multiclass` (human, GEMINI, LLAMA, CODESTRAL) | .554        | .571 ± .026       | .595          | .614    |
+| `binary_generate`                              | .923        | .939 ± .008       | .943          | .948    |
+| `multiclass_generate`                          | .808        | .837 ± .016       | .839          | .867    |
 
 The `_generate` variants keep only LLM code written from scratch and drop the LLM edits of human submissions.
 
@@ -32,17 +32,32 @@ git clone https://github.com/mparts/CODer.git
 cd CODer
 ```
 
-The code uses `torch`, `transformers`, `datasets`, `huggingface_hub`, `scikit-learn`, `pandas`, `pyarrow`, `numpy`, `matplotlib` and `tqdm`. A GPU is only needed to train or re-predict.
+A GPU is only needed to train or re-predict. The versions below are the server's on 2026-11-14. The `transformers` version is the one all 24 UniXcoder checkpoints record.
+
+| Package           | Version                                        |
+| ----------------- | ---------------------------------------------- |
+| Python            | 3.12.16                                        |
+| `torch`           | 2.4.1+cu121 (CUDA 12.1)                        |
+| `transformers`    | 4.44.2                                         |
+| `datasets`        | 4.8.5                                          |
+| `huggingface_hub` | 0.36.2                                         |
+| `scikit-learn`    | 1.5.2                                          |
+| `pandas`          | 2.2.2                                          |
+| `pyarrow`         | 24.0.0                                         |
+| `numpy`           | 1.26.4                                         |
+| `matplotlib`      | 3.9.2                                          |
+| `tqdm`            | 4.66.5                                         |
+| GPU               | NVIDIA GeForce GTX 1080 Ti (driver 580.178.04) |
 
 ## Reproduce
 
 [run/RUN.sh](run/RUN.sh) runs the pipeline. Run it from the repository root, with or without a preset:
 
-| Command | What it does | Needs |
-|---|---|---|
-| `bash run/RUN.sh` | Rebuilds Tables 2 and 5 from the test predictions shipped in `docs/experiments/archive/` | Minutes, no download, no GPU |
-| `bash run/RUN.sh hub.conf` | Fetches the processed data and the 24 UniXcoder checkpoints from the Hugging Face Hub, predicts test again, then rebuilds the tables. The LogReg numbers come from the shipped predictions | About 12 GB of download, a GPU |
-| `bash run/RUN.sh og.conf` | The whole experiment from scratch: download, preprocessing, data checks, both LogRegs, UniXcoder over 6 seeds and 4 variants, then the tables | Hours on the GPU. The numbers come out close to the paper, not identical, since GPU training is not bit-exact |
+| Command                    | What it does                                                                                                                                                                               | Needs                                                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `bash run/RUN.sh`          | Rebuilds Tables 2 and 5 from the test predictions shipped in `docs/experiments/archive/`                                                                                                   | Minutes, no download, no GPU                                                                                  |
+| `bash run/RUN.sh hub.conf` | Fetches the processed data and the 24 UniXcoder checkpoints from the Hugging Face Hub, predicts test again, then rebuilds the tables. The LogReg numbers come from the shipped predictions | About 12 GB of download, a GPU                                                                                |
+| `bash run/RUN.sh og.conf`  | The whole experiment from scratch: download, preprocessing, data checks, both LogRegs, UniXcoder over 6 seeds and 4 variants, then the tables                                              | Hours on the GPU. The numbers come out close to the paper, not identical, since GPU training is not bit-exact |
 
 - Stages and settings live in [run/run.conf](run/run.conf). A preset is read after it and overrides it. The output is logged to `run/run.log`.
 - The `hub.conf` and `og.conf` runs overwrite the shipped results in `docs/experiments/archive/`. `git checkout -- docs/experiments/archive` restores them.
@@ -57,7 +72,7 @@ The code uses `torch`, `transformers`, `datasets`, `huggingface_hub`, `scikit-le
 ├── src/code_origin/    the Python package: data, models, training, evaluation
 ├── data/               the dataset, built or fetched by RUN.sh (only processed/meta.json is in git)
 └── docs/
-    ├── reports/        the paper (markdown and PDF) and the AI-use log
+    ├── reports/        the paper and the AI-use log
     ├── notebooks/      project proposal and presentation slides
     └── experiments/    archived runs behind Tables 2, 3 and 5
 ```
