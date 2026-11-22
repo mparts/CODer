@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: "CODer: Code Origin Detector"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: "mparts"
+    given-names: "mparts"
+repository-code: "https://github.com/mparts/CODer"
+url: "https://kursplaner.gu.se/pdf/kurs/en/LT2326.pdf"
+license: MIT
